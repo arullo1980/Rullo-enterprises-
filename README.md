@@ -81,15 +81,41 @@ python3 -m http.server 8000
 
 ## Deployment
 
-Target: **Cloudflare Pages** (Direct Upload — no build needed).
+Target: **GitHub Pages**, custom domain **rulloenterprises.com**. Deploys
+automatically from `.github/workflows/deploy.yml` on every push to `main`
+that touches `site/` — no manual uploads. `404.html` is served for
+unmatched routes; `CNAME` pins the custom domain; `.nojekyll` serves files
+untouched.
 
-- Build command: *(none)*
-- Output / upload directory: **`site`**
+**One-time setup (in this order):**
 
-`404.html` at the site root is served automatically by Cloudflare Pages for
-unmatched routes. See `CLAUDE_CODE_HANDOFF.md` for the full deployment
-history, the IONOS → Cloudflare DNS migration plan, and the MX-record
-checklist to complete before switching nameservers.
+1. **Repo → Settings → Pages → Build and deployment → Source:** select
+   **GitHub Actions**.
+2. **DNS at IONOS** — add these records for the apex domain (this is a
+   record change only; **no nameserver migration** needed):
+
+   | Type | Name | Value |
+   | --- | --- | --- |
+   | A | `@` | `185.199.108.153` |
+   | A | `@` | `185.199.109.153` |
+   | A | `@` | `185.199.110.153` |
+   | A | `@` | `185.199.111.153` |
+   | CNAME | `www` | `arullo1980.github.io` |
+
+   (Optionally add the four `AAAA` records for IPv6 — see GitHub's
+   "Managing a custom domain" docs. Verify the IPs there too; they're
+   GitHub's published Pages addresses but worth a sanity check.)
+3. **Repo → Settings → Pages → Custom domain:** enter
+   `rulloenterprises.com`, save, then tick **Enforce HTTPS** once the
+   certificate is issued (can take a few minutes to an hour).
+
+Delete any old IONOS A/CNAME record for the domain that still points at the
+former WordPress app, so it doesn't compete with the records above. If
+email is hosted on this domain, leave its `MX` records untouched.
+
+> Alternative (from the original handoff): Cloudflare Pages via Direct
+> Upload with output dir `site`. See `CLAUDE_CODE_HANDOFF.md` for that plan
+> and its DNS/MX notes.
 
 ---
 
