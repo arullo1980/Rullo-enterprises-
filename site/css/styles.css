@@ -1,0 +1,193 @@
+@import url('https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=Courier+Prime:wght@400;700&display=swap');
+
+:root {
+  --paper: #F0EDE3;
+  --paper-2: #E7E2D3;
+  --line: #C7BFA9;
+  --ink: #1B1A15;
+  --ink-soft: #57544A;
+  --ink-faint: #8B8676;
+  --white: #FAF8F2;
+
+  --stamp: #A13327;
+  --carbon: #2E3E63;
+
+  --display: 'PT Serif', serif;
+  --body: 'IBM Plex Sans', sans-serif;
+  --mono: 'Courier Prime', monospace;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--body);
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--display);
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.005em;
+}
+
+p { margin: 0; line-height: 1.65; }
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+
+.mono { font-family: var(--mono); }
+
+.stamp-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  padding: 12px 22px;
+  transition: opacity 0.15s ease;
+  border: 1px solid var(--ink);
+}
+.btn:hover { opacity: 0.82; }
+.btn-fill { background: var(--ink); color: var(--white); }
+.btn-line { color: var(--ink); }
+.btn-line-light { border-color: rgba(250,248,242,0.4); color: var(--white); }
+
+a:focus-visible, button:focus-visible {
+  outline: 2px solid var(--stamp);
+  outline-offset: 3px;
+}
+
+/* NAV */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--paper);
+  border-bottom: 2px solid var(--ink);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0 18px;
+}
+.nav-mark {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+}
+.nav-links a { color: var(--ink-soft); }
+.nav-links a:hover { color: var(--ink); }
+.nav-cta { padding: 8px 16px; border: 1px solid var(--ink); color: var(--ink) !important; }
+
+/* LETTERHEAD / HERO */
+.letterhead { padding: 88px 0 68px; border-bottom: 1px solid var(--line); }
+.letterhead-inner { max-width: 680px; }
+.letterhead-title { font-size: 46px; margin: 14px 0 18px; }
+.letterhead-sub { font-size: 16px; color: var(--ink-soft); max-width: 56ch; margin-bottom: 30px; }
+.letterhead-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.section-head { margin-bottom: 30px; }
+.section-head h2 { font-size: 26px; margin-top: 6px; }
+
+/* OFFERINGS SCHEDULE */
+.offerings { padding: 64px 0 76px; }
+.schedule { border-top: 1px solid var(--ink); }
+.schedule-row {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+}
+.schedule-name { display: flex; align-items: baseline; gap: 14px; }
+.schedule-name .mono { color: var(--ink-faint); font-size: 13px; }
+.schedule-name h3 { font-size: 18px; }
+.schedule-row p { color: var(--ink-soft); font-size: 14.5px; max-width: 56ch; }
+
+/* STOREFRONT WIDGET */
+.storefront { padding: 20px 0 84px; border-top: 1px solid var(--line); background: var(--paper-2); }
+.widget-frame { border: 1px solid var(--ink); background: var(--white); padding: 28px; min-height: 180px; }
+.powered-by { margin-top: 14px; color: var(--ink-faint); font-size: 11.5px; }
+
+/* HOW IT WORKS */
+.how { padding: 20px 0 84px; border-top: 1px solid var(--line); }
+.steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.step-no { color: var(--carbon); font-size: 13px; }
+.step h3 { font-size: 18px; margin: 10px 0 8px; }
+.step p { color: var(--ink-soft); font-size: 14.5px; }
+
+/* FAQ */
+.faq { padding: 20px 0 84px; border-top: 1px solid var(--line); }
+.faq-list { border-top: 1px solid var(--ink); }
+.faq-row { padding: 22px 0; border-bottom: 1px solid var(--line); }
+.faq-row h3 { font-size: 16.5px; margin-bottom: 8px; }
+.faq-row p { color: var(--ink-soft); font-size: 14.5px; max-width: 64ch; }
+
+/* CTA */
+.cta { background: var(--ink); color: var(--white); padding: 64px 0; }
+.cta-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+.cta h2 { font-size: 26px; color: var(--white); }
+
+/* FOOTER */
+.footer { background: var(--ink); color: rgba(250,248,242,0.72); padding: 56px 0 0; }
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: 40px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid rgba(250,248,242,0.14);
+}
+.footer-mark { font-size: 13px; letter-spacing: 0.06em; color: var(--white); margin-bottom: 14px; }
+.footer-copy { font-size: 14px; max-width: 30ch; color: rgba(250,248,242,0.55); }
+.footer-label { color: rgba(250,248,242,0.5); margin-bottom: 12px; opacity: 0.7; }
+.footer-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
+.footer-list a:hover { color: var(--white); }
+.footer-bottom { display: flex; justify-content: space-between; padding: 18px 0; font-size: 11px; color: rgba(250,248,242,0.4); }
+
+/* PRIVACY PAGE */
+.privacy { padding: 72px 0 90px; }
+.privacy-inner { max-width: 680px; }
+.privacy-inner h1 { font-size: 36px; margin: 14px 0 6px; }
+.updated { color: var(--ink-faint); font-size: 12px; margin-bottom: 40px; }
+.privacy-body h2 { font-size: 17px; margin: 32px 0 10px; }
+.privacy-body h2:first-child { margin-top: 0; }
+.privacy-body p { color: var(--ink-soft); font-size: 14.5px; }
+
+@media (max-width: 860px) {
+  .letterhead-title { font-size: 32px; }
+  .schedule-row { grid-template-columns: 1fr; }
+  .steps-grid { grid-template-columns: 1fr; gap: 26px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 720px) {
+  .wrap { padding: 0 18px; }
+  .nav-links { gap: 12px; font-size: 11px; }
+}

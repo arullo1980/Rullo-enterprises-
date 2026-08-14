@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rulloenterprises.com/sitemap.xml
