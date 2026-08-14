@@ -90,7 +90,9 @@ untouched.
 **One-time setup (in this order):**
 
 1. **Repo → Settings → Pages → Build and deployment → Source:** select
-   **GitHub Actions**.
+   **GitHub Actions**. (The workflow attempts to set this automatically on
+   its first run; only do it by hand if that run reports Pages isn't
+   enabled.)
 2. **DNS at IONOS** — add these records for the apex domain (this is a
    record change only; **no nameserver migration** needed):
 

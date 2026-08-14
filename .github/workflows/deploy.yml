@@ -34,6 +34,11 @@ jobs:
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
+        with:
+          # Try to enable Pages (source = GitHub Actions) automatically, so
+          # there's no manual toggle. If your account blocks API enablement,
+          # flip Settings → Pages → Source to "GitHub Actions" and re-run.
+          enablement: true
 
       - name: Upload site/ as the Pages artifact
         uses: actions/upload-pages-artifact@v3
