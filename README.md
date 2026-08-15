@@ -38,27 +38,28 @@ in production.
 
 ## Design system
 
-A deliberate document / filing-register aesthetic — flat, no rounded
-corners, no drop shadows, no hover-lift cards. (A generic
-cream + gold + serif card-grid look was tried and rejected.)
+Clean, modern, and professional — an emerald brand color, bold display
+type, soft-shadow cards, and rounded pills. Built to read like a real
+product, not a template.
 
 | Token | Value | Role |
 | --- | --- | --- |
-| `--paper` | `#F0EDE3` | background |
-| `--paper-2` | `#E7E2D3` | alternate section background |
-| `--line` | `#C7BFA9` | hairline rules |
-| `--ink` | `#1B1A15` | primary text / dark sections |
-| `--ink-soft` | `#57544A` | secondary text |
-| `--ink-faint` | `#8B8676` | tertiary / label text |
-| `--stamp` | `#A13327` | rare accent — status/stamp only |
-| `--carbon` | `#2E3E63` | link / interactive accent |
+| `--bg` | `#F6F7F5` | page background |
+| `--bg-2` | `#EEF1EE` | alternate / tinted section |
+| `--surface` | `#FFFFFF` | cards |
+| `--ink` | `#10201A` | primary text |
+| `--ink-soft` | `#55635C` | secondary text |
+| `--line` | `#E4E8E4` | borders / hairlines |
+| `--accent` | `#0F9E70` | emerald brand color |
+| `--accent-dark` | `#0B7B57` | hover / emphasis |
+| `--ink-deep` | `#0C1A15` | dark CTA band + footer |
 
-**Type:** PT Serif (headlines) · IBM Plex Sans (body) · Courier Prime
-(labels, numbers, data).
+**Type:** Space Grotesk (display / headlines) · Inter (body) · IBM Plex
+Mono (labels, numbers, data).
 
-When adding sections, keep to these patterns (numbered "schedule" rows,
-bordered "widget frame" panels, `§`-style section labels). Avoid
-reintroducing rounded-corner card grids or a gold/cream palette.
+Patterns: a two-tone hero headline, monospace micro-labels, rounded feature
+pills, soft-shadow cards with a subtle hover lift, an app-window frame
+around the widget, and an accordion FAQ.
 
 ---
 
