@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+  <rect width="48" height="48" fill="#1B1A15"/>
+  <rect x="3.5" y="3.5" width="41" height="41" fill="none" stroke="#F0EDE3" stroke-opacity="0.5" stroke-width="1.4"/>
+  <text x="24" y="32.5" text-anchor="middle" fill="#F0EDE3"
+        font-family="Georgia, 'PT Serif', 'Times New Roman', serif"
+        font-weight="700" font-size="23" letter-spacing="0.5">RE</text>
+</svg>
