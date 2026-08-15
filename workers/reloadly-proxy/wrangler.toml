@@ -1,0 +1,18 @@
+name = "rullo-reloadly-proxy"
+main = "src/worker.js"
+compatibility_date = "2025-01-01"
+
+# Non-secret config only. Set to "sandbox" while testing, "live" for production.
+[vars]
+RELOADLY_ENV = "sandbox"
+
+# Secrets are NEVER put in this file. Set them once, encrypted, in Cloudflare:
+#   npx wrangler secret put RELOADLY_CLIENT_ID
+#   npx wrangler secret put RELOADLY_CLIENT_SECRET
+
+# Optional: serve from your own subdomain instead of *.workers.dev.
+# This adds only the `api` subdomain to Cloudflare's proxy — it does NOT
+# touch the apex records that point at GitHub Pages.
+# [[routes]]
+# pattern = "api.rulloenterprises.com"
+# custom_domain = true
