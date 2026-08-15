@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#1B1A15" />
+  <meta name="theme-color" content="#0F9E70" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
   <title>Rullo Enterprises — International Top-Ups &amp; Gift Cards</title>
@@ -25,12 +25,7 @@
     "name": "Rullo Enterprises",
     "url": "https://rulloenterprises.com",
     "description": "Rullo Enterprises operates an international top-up and gift card storefront — mobile airtime, mobile data, gift cards, and utility bill payments, powered by Reloadly.",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Simpsonville",
-      "addressRegion": "SC",
-      "addressCountry": "US"
-    }
+    "address": { "@type": "PostalAddress", "addressLocality": "Simpsonville", "addressRegion": "SC", "addressCountry": "US" }
   }
   </script>
 
@@ -38,96 +33,131 @@
   <script src="https://cdn.reloadly.com/widget/v2/reloadly-widget.js" defer></script>
 </head>
 <body>
+  <a class="skip-link" href="#storefront">Skip to the storefront</a>
 
   <header class="nav">
     <div class="wrap nav-inner">
-      <a href="/" class="nav-mark">RULLO ENTERPRISES</a>
-      <nav class="nav-links">
+      <a href="/" class="nav-mark"><span class="nav-dot" aria-hidden="true"></span>Rullo Enterprises</a>
+      <nav class="nav-links" aria-label="Primary">
         <a href="#offerings">What you can send</a>
         <a href="#how">How it works</a>
         <a href="#faq">FAQ</a>
-        <a href="#storefront" class="nav-cta">Send now</a>
       </nav>
+      <a href="#storefront" class="nav-cta">Send now</a>
     </div>
   </header>
 
   <main>
 
+    <!-- HERO -->
     <section class="letterhead">
       <div class="wrap letterhead-inner">
-        <p class="stamp-label">Simpsonville, South Carolina — Rullo Enterprises</p>
-        <h1 class="letterhead-title">Send credit, worldwide.</h1>
+        <span class="stamp-label">Top-ups · Gift cards · Bill pay</span>
+        <h1 class="letterhead-title">Send credit,<span class="acc">anywhere in the world.</span></h1>
         <p class="letterhead-sub">
-          Mobile airtime, data, gift cards, and utility bill payments —
-          sent from here, delivered there, in minutes. Real-time,
-          secure, no account required.
+          Mobile airtime, data, gift cards, and utility bill payments — sent from
+          here, delivered there, in minutes. Real-time, secure, and no account required.
         </p>
         <div class="letterhead-actions">
-          <a href="#storefront" class="btn btn-fill">Send now</a>
+          <a href="#storefront" class="btn btn-fill">Send now →</a>
           <a href="#how" class="btn btn-line">How it works</a>
+        </div>
+        <div class="hero-pills">
+          <span class="pill">⚡ <b>Real-time</b> delivery</span>
+          <span class="pill">🌍 <b>190+</b> countries</span>
+          <span class="pill">🔒 <b>Secure</b> checkout</span>
+          <span class="pill">✓ <b>No account</b> needed</span>
         </div>
       </div>
     </section>
 
-    <section id="offerings" class="offerings">
+    <!-- OFFERINGS -->
+    <section id="offerings" class="section">
       <div class="wrap">
         <div class="section-head">
           <span class="stamp-label">What's on offer</span>
           <h2>Four ways to send it</h2>
+          <p class="section-sub">One storefront for the things people actually need sent — pick a category and search inside the tool.</p>
         </div>
-        <div class="schedule">
-          <div class="schedule-row">
-            <div class="schedule-name"><span class="mono">01</span><h3>Mobile Airtime Top-Up</h3></div>
+        <div class="card-grid">
+          <article class="o-card">
+            <div class="o-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></svg>
+            </div>
+            <span class="o-num">01</span>
+            <h3>Mobile Airtime Top-Up</h3>
             <p>Recharge a prepaid phone anywhere in the world — pick the operator, the amount, and the number, and the credit lands in minutes.</p>
-          </div>
-          <div class="schedule-row">
-            <div class="schedule-name"><span class="mono">02</span><h3>Mobile Data Bundles</h3></div>
+          </article>
+          <article class="o-card">
+            <div class="o-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5a10 10 0 0 1 14 0"/><path d="M8.5 16a5 5 0 0 1 7 0"/><path d="M2 9a15 15 0 0 1 20 0"/><circle cx="12" cy="19.5" r="1"/></svg>
+            </div>
+            <span class="o-num">02</span>
+            <h3>Mobile Data Bundles</h3>
             <p>Send a data plan instead of cash airtime, sized to what the recipient's operator actually offers.</p>
-          </div>
-          <div class="schedule-row">
-            <div class="schedule-name"><span class="mono">03</span><h3>Gift Cards</h3></div>
+          </article>
+          <article class="o-card">
+            <div class="o-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M3 12h18M12 8v13"/><path d="M12 8S10 3 7.5 4.5 9.5 8 12 8zM12 8s2-5 4.5-3.5S14.5 8 12 8z"/></svg>
+            </div>
+            <span class="o-num">03</span>
+            <h3>Gift Cards</h3>
             <p>Digital gift cards across major retail, streaming, and gaming brands, delivered by email or code.</p>
-          </div>
-          <div class="schedule-row">
-            <div class="schedule-name"><span class="mono">04</span><h3>Utility Bill Payments</h3></div>
+          </article>
+          <article class="o-card">
+            <div class="o-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>
+            </div>
+            <span class="o-num">04</span>
+            <h3>Utility Bill Payments</h3>
             <p>Pay an electricity, water, or other utility bill directly for someone, in the country and provider it's owed to.</p>
-          </div>
+          </article>
         </div>
       </div>
     </section>
 
-    <section id="storefront" class="storefront">
+    <!-- STOREFRONT / WIDGET -->
+    <section id="storefront" class="section storefront">
       <div class="wrap">
         <div class="section-head">
           <span class="stamp-label">Live storefront</span>
           <h2>Send a top-up or gift card now</h2>
+          <p class="section-sub">Search by country or provider, enter the details, and pay securely — all in one place.</p>
         </div>
-        <div class="widget-frame">
-          <reloadly-widget data-widget-id="qEM4TYgz5qYBoBXWiyp6XZL10GnKhexHbWZt0ebEeM"></reloadly-widget>
+        <div class="widget-shell">
+          <div class="widget-topbar">
+            <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="wt-label">rulloenterprises.com / secure checkout</span>
+          </div>
+          <div class="widget-frame">
+            <reloadly-widget data-widget-id="qEM4TYgz5qYBoBXWiyp6XZL10GnKhexHbWZt0ebEeM"></reloadly-widget>
+          </div>
         </div>
-        <p class="powered-by mono">Powered by Reloadly · payments processed securely</p>
+        <p class="powered-by">Powered by Reloadly · payments processed securely</p>
       </div>
     </section>
 
-    <section id="how" class="how">
+    <!-- HOW IT WORKS -->
+    <section id="how" class="section">
       <div class="wrap">
         <div class="section-head">
           <span class="stamp-label">Three steps</span>
           <h2>How it works</h2>
+          <p class="section-sub">You touch only the two ends — pick what to send, and it's delivered.</p>
         </div>
-        <div class="steps-grid">
+        <div class="steps">
           <div class="step">
-            <span class="mono step-no">01</span>
+            <span class="step-no">01</span>
             <h3>Search</h3>
             <p>Look up the operator, retailer, or utility provider you need — by country or by name.</p>
           </div>
           <div class="step">
-            <span class="mono step-no">02</span>
+            <span class="step-no">02</span>
             <h3>Enter the details</h3>
             <p>Amount, and the recipient's number, email, or account — the widget shows the exact price before you confirm.</p>
           </div>
           <div class="step">
-            <span class="mono step-no">03</span>
+            <span class="step-no">03</span>
             <h3>Pay securely</h3>
             <p>Checkout is handled by Reloadly's payment processor. Rullo Enterprises never sees or stores your card details.</p>
           </div>
@@ -135,37 +165,40 @@
       </div>
     </section>
 
-    <section id="faq" class="faq">
+    <!-- FAQ -->
+    <section id="faq" class="section section-tint">
       <div class="wrap">
         <div class="section-head">
           <span class="stamp-label">Questions</span>
           <h2>Before you send</h2>
         </div>
         <div class="faq-list">
-          <div class="faq-row">
-            <h3>Which countries are supported?</h3>
-            <p>Coverage spans mobile operators, gift card brands, and utility providers worldwide. Search inside the tool above to see what's available for a specific country.</p>
-          </div>
-          <div class="faq-row">
-            <h3>How fast does it arrive?</h3>
-            <p>Most mobile top-ups and gift cards deliver within minutes. Utility payments follow the provider's own posting time.</p>
-          </div>
-          <div class="faq-row">
-            <h3>Is my payment information safe?</h3>
-            <p>Checkout runs through Reloadly's payment processor. Rullo Enterprises does not collect or store card numbers.</p>
-          </div>
-          <div class="faq-row">
-            <h3>Are fees shown up front?</h3>
-            <p>Yes — the total price, including any fees, is shown before you confirm and pay.</p>
-          </div>
+          <details class="faq-item" open>
+            <summary>Which countries are supported?</summary>
+            <p class="faq-a">Coverage spans mobile operators, gift card brands, and utility providers worldwide. Search inside the tool above to see what's available for a specific country.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How fast does it arrive?</summary>
+            <p class="faq-a">Most mobile top-ups and gift cards deliver within minutes. Utility payments follow the provider's own posting time.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Is my payment information safe?</summary>
+            <p class="faq-a">Checkout runs through Reloadly's payment processor. Rullo Enterprises does not collect or store card numbers.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Are fees shown up front?</summary>
+            <p class="faq-a">Yes — the total price, including any fees, is shown before you confirm and pay.</p>
+          </details>
         </div>
       </div>
     </section>
 
+    <!-- CTA -->
     <section class="cta">
-      <div class="wrap cta-inner">
+      <div class="wrap">
         <h2>Ready when you are.</h2>
-        <a href="#storefront" class="btn btn-line-light">Send now</a>
+        <p>Send airtime, data, a gift card, or a bill payment across the world in the next few minutes.</p>
+        <a href="#storefront" class="btn btn-fill">Send now →</a>
       </div>
     </section>
 
@@ -174,11 +207,11 @@
   <footer class="footer" id="contact">
     <div class="wrap footer-grid">
       <div>
-        <div class="footer-mark mono">RULLO ENTERPRISES</div>
-        <p class="footer-copy">International top-ups, gift cards, and bill payments — powered by Reloadly.</p>
+        <div class="footer-mark"><span class="nav-dot" aria-hidden="true"></span>Rullo Enterprises</div>
+        <p class="footer-copy">International top-ups, gift cards, and bill payments — delivered worldwide, powered by Reloadly.</p>
       </div>
       <div>
-        <div class="stamp-label footer-label">Site</div>
+        <span class="footer-label">Site</span>
         <ul class="footer-list">
           <li><a href="#offerings">What you can send</a></li>
           <li><a href="#how">How it works</a></li>
@@ -186,13 +219,13 @@
         </ul>
       </div>
       <div>
-        <div class="stamp-label footer-label">Legal</div>
+        <span class="footer-label">Legal</span>
         <ul class="footer-list">
           <li><a href="/privacy/">Privacy Policy</a></li>
         </ul>
       </div>
       <div>
-        <div class="stamp-label footer-label">Connect</div>
+        <span class="footer-label">Connect</span>
         <ul class="footer-list">
           <li><a href="https://www.instagram.com/" target="_blank" rel="noreferrer">Instagram</a></li>
           <li><a href="https://www.facebook.com/" target="_blank" rel="noreferrer">Facebook</a></li>
@@ -200,11 +233,17 @@
         </ul>
       </div>
     </div>
-    <div class="wrap footer-bottom mono">
+    <div class="wrap footer-bottom">
       <span>© 2026 Rullo Enterprises</span>
       <span>Simpsonville, SC</span>
     </div>
   </footer>
 
+  <script>
+    // Subtle header shadow on scroll
+    var nav = document.querySelector('.nav');
+    var onScroll = function () { nav.classList.toggle('scrolled', window.scrollY > 8); };
+    onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+  </script>
 </body>
 </html>

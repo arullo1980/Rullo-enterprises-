@@ -38,27 +38,29 @@ in production.
 
 ## Design system
 
-A deliberate document / filing-register aesthetic — flat, no rounded
-corners, no drop shadows, no hover-lift cards. (A generic
-cream + gold + serif card-grid look was tried and rejected.)
+"Ivory & Emerald" — a warm, premium, editorial look: an ivory ground,
+Playfair serif headlines with an emerald italic accent, gold detailing, and
+soft-shadow cards.
 
 | Token | Value | Role |
 | --- | --- | --- |
-| `--paper` | `#F0EDE3` | background |
-| `--paper-2` | `#E7E2D3` | alternate section background |
-| `--line` | `#C7BFA9` | hairline rules |
-| `--ink` | `#1B1A15` | primary text / dark sections |
-| `--ink-soft` | `#57544A` | secondary text |
-| `--ink-faint` | `#8B8676` | tertiary / label text |
-| `--stamp` | `#A13327` | rare accent — status/stamp only |
-| `--carbon` | `#2E3E63` | link / interactive accent |
+| `--bg` | `#FAF7EF` | warm ivory background |
+| `--bg-2` | `#F3EEE1` | alternate / tinted section |
+| `--surface` | `#FFFDF8` | cards |
+| `--ink` | `#1B1710` | primary text |
+| `--ink-soft` | `#5E574A` | secondary text |
+| `--line` | `#E7DFCC` | borders / hairlines |
+| `--emerald` | `#0E7C55` | primary brand color (CTAs, accent line) |
+| `--gold` | `#B8963F` | secondary accent (labels, card tops, detailing) |
+| `--band` | `#0B5C40` | emerald CTA band |
+| `--ink-deep` | `#17130C` | footer |
 
-**Type:** PT Serif (headlines) · IBM Plex Sans (body) · Courier Prime
-(labels, numbers, data).
+**Type:** Playfair Display (display / headlines) · Inter (body) · IBM Plex
+Mono (labels, numbers, data).
 
-When adding sections, keep to these patterns (numbered "schedule" rows,
-bordered "widget frame" panels, `§`-style section labels). Avoid
-reintroducing rounded-corner card grids or a gold/cream palette.
+Patterns: a two-tone serif hero headline (ink + emerald italic), gold
+monospace micro-labels, feature pills, gold-topped soft-shadow cards, an
+app-window frame around the widget, and an accordion FAQ.
 
 ---
 
