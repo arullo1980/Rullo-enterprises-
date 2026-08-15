@@ -116,6 +116,27 @@
       </div>
     </section>
 
+    <!-- COVERAGE -->
+    <section id="coverage" class="section coverage">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="stamp-label">Where you can send</span>
+          <h2>Reachable across every region</h2>
+          <p class="section-sub">Search for a destination to confirm it's reachable, then jump straight into checkout to pick the operator, brand, or provider.</p>
+        </div>
+        <div class="cov-search">
+          <input id="covSearch" type="search" placeholder="Search a country — Nigeria, Mexico, India…" autocomplete="off" aria-label="Search countries" />
+        </div>
+        <span id="covCount" class="cov-count mono"></span>
+        <div class="cov-layout">
+          <div id="covGrid" class="cov-grid" role="listbox" aria-label="Destinations"></div>
+          <aside id="covPanel" class="cov-panel" aria-live="polite">
+            <p class="cov-placeholder">Pick a destination to see coverage and jump into checkout.</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
     <!-- STOREFRONT / WIDGET -->
     <section id="storefront" class="section storefront">
       <div class="wrap">
@@ -175,7 +196,7 @@
         <div class="faq-list">
           <details class="faq-item" open>
             <summary>Which countries are supported?</summary>
-            <p class="faq-a">Coverage spans mobile operators, gift card brands, and utility providers worldwide. Search inside the tool above to see what's available for a specific country.</p>
+            <p class="faq-a">We reach destinations across every region. Use the coverage search above to check a specific country, then confirm the exact operators, brands, and providers in the storefront.</p>
           </details>
           <details class="faq-item">
             <summary>How fast does it arrive?</summary>
@@ -245,5 +266,6 @@
     var onScroll = function () { nav.classList.toggle('scrolled', window.scrollY > 8); };
     onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
   </script>
+  <script src="/js/coverage.js" defer></script>
 </body>
 </html>
