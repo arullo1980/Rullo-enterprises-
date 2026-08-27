@@ -1,0 +1,16 @@
+{
+  "name": "rullo-reloadly-proxy",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Server-side proxy holding the Reloadly credentials for the Rullo Enterprises storefront.",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "dev": "wrangler dev",
+    "dev:mock": "wrangler dev --var RELOADLY_ENV:mock",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.20.0"
+  }
+}

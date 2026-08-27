@@ -22,10 +22,20 @@ this codebase never sees or stores payment data.
 │   │   └── index.html     # privacy policy (DRAFT — see "Outstanding" below)
 │   ├── css/
 │   │   └── styles.css     # all styles, shared across pages
+│   ├── js/
+│   │   ├── config.js      # proxy URL — empty means "offline mode" (see below)
+│   │   └── coverage.js    # searchable coverage explorer
 │   ├── favicon.svg        # "RE" monogram in the site's ink/paper palette
 │   ├── icons.svg          # SVG symbol sheet (currently unused)
 │   ├── robots.txt
 │   └── sitemap.xml
+├── workers/
+│   └── reloadly-proxy/    # Cloudflare Worker holding the Reloadly credentials
+│       ├── src/           # worker.js, products.js, mock.js
+│       ├── test/          # offline test suite — npm test
+│       └── test.sh        # smoke test against a deployed Worker
+├── _toolkit/
+│   └── postmark.py        # two-machine work protocol (see CLAUDE.md)
 ├── CLAUDE_CODE_HANDOFF.md # full project brief, integration + deployment notes
 └── README.md
 ```
@@ -135,9 +145,38 @@ repo.
 
 Widget behavior, theme, supported countries, and the payment-processor
 connection are all configured in the **Reloadly dashboard**, not here.
-Anything requiring deeper integration (custom checkout, programmatic
-orders) would need Reloadly API credentials that have not been issued —
-don't assume they exist.
+Checkout happens entirely inside the widget, so this codebase never sees or
+stores payment data.
+
+### The API proxy
+
+`workers/reloadly-proxy/` is a Cloudflare Worker that holds the Reloadly API
+credentials server-side and exposes **read-only** endpoints the static site can
+call. The browser never sees a secret; it only ever calls the Worker. It covers
+all three Reloadly APIs — top-ups, gift cards, and utilities — behind one
+`/coverage?country=XX` call.
+
+Credentials have not been issued yet, so the Worker ships with a **mock mode**
+that serves fixture data in the real API's shape. That is how the front end was
+wired and tested without an account:
+
+```bash
+cd workers/reloadly-proxy
+npm test          # 18 offline tests — routing, validation, CORS, caching
+npm run dev:mock  # local Worker on fixture data
+```
+
+**Live coverage is off until someone turns it on.** `site/js/config.js` has an
+empty `apiBase`; with it empty the site behaves exactly as it does today. Set
+it to a deployed Worker URL and the coverage explorer additionally shows the
+real operators, brands, and billers per country. If the proxy is unset, slow,
+or down, the panel keeps its offline content — live data is strictly additive.
+
+Full instructions in [`workers/reloadly-proxy/README.md`](workers/reloadly-proxy/README.md).
+
+A fully custom checkout (operator → amount → recipient → Stripe → Reloadly
+order) is the larger follow-on and needs write access to the Reloadly API. It
+is deliberately not started.
 
 ---
 
@@ -150,7 +189,13 @@ Tracked in detail in `CLAUDE_CODE_HANDOFF.md`:
    review before it's finished and made indexable.
 2. **Widget not yet visually confirmed live** — first check after deploy:
    does it render and complete a test transaction?
-3. **Footer contact email and social links are placeholders** — the
+3. **Reloadly API credentials not issued** — the proxy is written, tested, and
+   ready, but cannot be deployed against the real API until credentials exist
+   at developers.reloadly.com. Until then it runs on fixtures.
+4. **Cloudflare Workers build is failing** on the `rullo-enterprises` service.
+   The build config lives in the Cloudflare dashboard, not this repo; it needs
+   its root directory set to `workers/reloadly-proxy`.
+5. **Footer contact email and social links are placeholders** — the
    Instagram/Facebook/X links point at bare platform homepages, not real
    Rullo Enterprises accounts.
 

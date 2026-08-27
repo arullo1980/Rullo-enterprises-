@@ -9,7 +9,9 @@ Guidance for Claude Code working in this repository.
 bundles, gift cards, utility bill payments, worldwide.
 
 - **Stack:** plain static HTML/CSS in `site/`. No build step, no framework, no
-  dependencies. A Cloudflare Worker proxy was added recently (PR #5).
+  runtime dependencies. `workers/reloadly-proxy/` is a Cloudflare Worker that
+  holds the Reloadly credentials server-side (Node is needed only to test and
+  deploy it, never to serve the site).
 - **State:** built and rendering locally, **not yet live**.
 
 **Current priority: integration.**
@@ -19,12 +21,19 @@ bundles, gift cards, utility bill payments, worldwide.
    `deploy.yml` workflow publishes `site/`.
 2. The privacy policy in `site/privacy/` is a **DRAFT** and must be finished
    before launch.
-3. Wire up the secure Reloadly API proxy scaffold added in PR #5.
-4. Checkout runs inside Reloadly's embedded Plugin V2 widget, so this codebase
+3. The Reloadly proxy is wired end to end and tested against fixtures. It
+   cannot go live until API credentials are issued at developers.reloadly.com.
+   When they are: deploy the Worker, run `workers/reloadly-proxy/test.sh`
+   against it, then put its URL in `site/js/config.js` (`apiBase`). Leaving
+   `apiBase` empty keeps the site in offline mode, which is the shipped state.
+4. The Cloudflare Workers build for the `rullo-enterprises` service is failing.
+   Its config is in the Cloudflare dashboard, not this repo — the root
+   directory needs to be `workers/reloadly-proxy`.
+5. Checkout runs inside Reloadly's embedded Plugin V2 widget, so this codebase
    never sees payment data. Widget behavior/theme is configured in the Reloadly
-   dashboard, not here. Deeper API integration needs credentials that have not
-   been issued yet.
-5. Full context in `CLAUDE_CODE_HANDOFF.md`.
+   dashboard, not here. A custom checkout would need write API access and is
+   deliberately not started.
+6. Full context in `CLAUDE_CODE_HANDOFF.md`.
 <!-- PROJECT-BRIEF:END -->
 
 ---

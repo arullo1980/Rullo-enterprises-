@@ -2,9 +2,21 @@ name = "rullo-reloadly-proxy"
 main = "src/worker.js"
 compatibility_date = "2025-01-01"
 
-# Non-secret config only. Set to "sandbox" while testing, "live" for production.
+# Non-secret config only.
+#   "mock"    — fixture data, no Reloadly account needed. For local development.
+#   "sandbox" — Reloadly's test environment. No real money moves.
+#   "live"    — production.
+# Sandbox and live use SEPARATE credentials; the mode must match the keys.
 [vars]
 RELOADLY_ENV = "sandbox"
+
+# Extra browser origins allowed to call this Worker, comma-separated. The
+# production domains are already built in; add a GitHub Pages preview or a
+# local dev server here rather than editing the code.
+# ALLOWED_ORIGINS = "http://localhost:8080,https://arullo1980.github.io"
+
+[observability]
+enabled = true
 
 # Secrets are NEVER put in this file. Set them once, encrypted, in Cloudflare:
 #   npx wrangler secret put RELOADLY_CLIENT_ID

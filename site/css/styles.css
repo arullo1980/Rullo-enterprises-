@@ -261,6 +261,29 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px soli
 .cov-cats span { font-family: var(--mono); font-size: .72rem; background: var(--gold-soft); color: #7c6220; padding: .32rem .62rem; border-radius: 999px; }
 .cov-go { width: 100%; }
 
+/* Live coverage — only rendered when the Reloadly proxy is configured
+   (js/config.js). Absent, the panel above is the whole story. */
+.cov-cats span.is-none { background: var(--bg-2); color: var(--ink-faint); }
+.cov-cats span.is-unknown { opacity: .55; }
+.cov-live { width: 100%; margin: 0 0 1.1rem; }
+.cov-live.is-loading {
+  font-family: var(--mono); font-size: .72rem; color: var(--ink-faint);
+  letter-spacing: .03em;
+}
+.cov-live-label {
+  font-size: .68rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink-faint); margin: 0 0 .5rem;
+}
+.cov-live-list {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-wrap: wrap; gap: 5px; justify-content: center;
+}
+.cov-live-list li {
+  font-size: .74rem; color: var(--emerald-dark);
+  background: var(--emerald-soft); border: 1px solid rgba(14,124,85,.14);
+  padding: .3rem .6rem; border-radius: var(--r-pill);
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 860px) {
   .steps { grid-template-columns: 1fr; }
