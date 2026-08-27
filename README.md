@@ -210,6 +210,6 @@ finishes a session. Do not edit by hand; never delete another machine row._
 
 | Machine | Last touched (UTC) | Branch | Commit | Summary |
 | ------- | ------------------ | ------ | ------ | ------- |
-| Antonio | 2026-08-27 00:51 | antonio/work-protocol | 0723700 | Install shared two-machine work protocol |
+| Antonio | 2026-08-27 01:32 | antonio/reloadly-integration | 7d01a86 | Merged PR #6 (work protocol). Wired Reloadly proxy end to end: all 3 APIs, mock mode, 18 tests, coverage explorer live-data path. Draft PR #7. |
 
 <!-- POSTMARK:END -->
