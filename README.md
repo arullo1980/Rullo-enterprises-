@@ -153,3 +153,18 @@ Tracked in detail in `CLAUDE_CODE_HANDOFF.md`:
 3. **Footer contact email and social links are placeholders** — the
    Instagram/Facebook/X links point at bare platform homepages, not real
    Rullo Enterprises accounts.
+
+---
+
+<!-- POSTMARK:BEGIN -->
+
+## Work Postmark
+
+_Maintained by `_toolkit/postmark.py`. Each machine stamps its row when it
+finishes a session. Do not edit by hand; never delete another machine row._
+
+| Machine | Last touched (UTC) | Branch | Commit | Summary |
+| ------- | ------------------ | ------ | ------ | ------- |
+| Antonio | 2026-08-27 00:51 | antonio/work-protocol | 0723700 | Install shared two-machine work protocol |
+
+<!-- POSTMARK:END -->
