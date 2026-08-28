@@ -1,0 +1,33 @@
+name = "social-hub"
+main = "src/worker.js"
+compatibility_date = "2025-01-01"
+
+# Non-secret configuration only. Secrets are set with `wrangler secret put`.
+[vars]
+# Origins allowed to call this Worker from a browser.
+ALLOWED_ORIGINS = "https://rulloenterprises.com,https://www.rulloenterprises.com"
+# The Worker's own public URL — used to build the OAuth redirect_uri, which must
+# match what is registered on each network exactly.
+PUBLIC_URL = "https://social-hub.example.workers.dev"
+USER_AGENT = "broadcast-desk/1.0 (+https://rulloenterprises.com)"
+# Ceilings the Worker enforces regardless of what the console asks for.
+MAX_POSTS_PER_HOUR = "20"
+MAX_ACTIONS_PER_HOUR = "30"
+MAX_PER_RUN = "25"
+FANOUT_GAP_MS = "400"
+
+# Encrypted token store and scheduling queue.
+# Create it once:  npx wrangler kv namespace create HUB
+[[kv_namespaces]]
+binding = "HUB"
+id = "replace-with-your-kv-namespace-id"
+
+# The queue runner. Every five minutes is enough for scheduled posting and keeps
+# well inside the free cron allowance.
+[triggers]
+crons = ["*/5 * * * *"]
+
+# Optional: serve from your own subdomain.
+# [[routes]]
+# pattern = "hub.rulloenterprises.com"
+# custom_domain = true

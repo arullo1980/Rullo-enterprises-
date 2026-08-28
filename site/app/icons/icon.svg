@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Broadcast Desk">
+  <rect width="512" height="512" rx="112" fill="#0E7C55"/>
+  <g fill="none" stroke="#FAF7EF" stroke-width="26" stroke-linecap="round">
+    <path d="M180 256a76 76 0 0 1 152 0"/>
+    <path d="M132 256a124 124 0 0 1 248 0"/>
+    <path d="M84 256a172 172 0 0 1 344 0"/>
+  </g>
+  <circle cx="256" cy="256" r="34" fill="#B8963F"/>
+  <rect x="238" y="256" width="36" height="132" rx="18" fill="#B8963F"/>
+</svg>

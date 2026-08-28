@@ -1,13 +1,19 @@
-# Rullo Enterprises — Storefront
+# Rullo Enterprises
 
-A single-purpose storefront at **rulloenterprises.com** selling
-[Reloadly's](https://www.reloadly.com/) full catalog — mobile airtime
-top-ups, mobile data bundles, gift cards, and utility bill payments —
-worldwide.
+Two things live here:
 
-Plain static HTML/CSS. **No build step, no framework, no dependencies.**
+1. **The storefront** at **rulloenterprises.com** — selling
+   [Reloadly's](https://www.reloadly.com/) full catalog: mobile airtime
+   top-ups, mobile data bundles, gift cards, and utility bill payments,
+   worldwide.
+2. **Broadcast Desk** at `/app` — a social operations console for running
+   many accounts at once: personal, business, and clients' accounts managed
+   on their behalf. See [`docs/BROADCAST_DESK.md`](docs/BROADCAST_DESK.md).
+
+Plain static HTML/CSS/JS. **No build step, no framework, no dependencies.**
 Checkout runs entirely inside an embedded Reloadly "Plugin V2" widget, so
-this codebase never sees or stores payment data.
+this codebase never sees or stores payment data — and the console never
+stores a social credential, for the same reason.
 
 ---
 
@@ -21,11 +27,22 @@ this codebase never sees or stores payment data.
 │   ├── privacy/
 │   │   └── index.html     # privacy policy (DRAFT — see "Outstanding" below)
 │   ├── css/
-│   │   └── styles.css     # all styles, shared across pages
+│   │   └── styles.css     # storefront styles
+│   ├── app/               # Broadcast Desk — the operations console (PWA)
+│   │   ├── index.html     # app shell
+│   │   ├── manifest.webmanifest
+│   │   ├── sw.js          # service worker — offline app shell
+│   │   ├── css/app.css    # console styles (same palette, denser)
+│   │   └── js/            # ES modules, loaded per view, no bundler
 │   ├── favicon.svg        # "RE" monogram in the site's ink/paper palette
 │   ├── icons.svg          # SVG symbol sheet (currently unused)
-│   ├── robots.txt
+│   ├── robots.txt         # storefront indexed; /app/ disallowed
 │   └── sitemap.xml
+├── workers/
+│   ├── reloadly-proxy/    # read-only Reloadly API proxy
+│   └── social-hub/        # Broadcast Desk backend — OAuth, publishing, cron
+├── docs/
+│   └── BROADCAST_DESK.md  # the console: concepts, generator syntax, rules
 ├── CLAUDE_CODE_HANDOFF.md # full project brief, integration + deployment notes
 └── README.md
 ```
@@ -123,6 +140,38 @@ email is hosted on this domain, leave its `MX` records untouched.
 
 ---
 
+## Broadcast Desk
+
+The console at `/app`. Runs many social accounts from one place: profiles for
+personal, business and client work; a keyword and phrase library; a message
+generator with spintax and library tokens; simultaneous posting to any set of
+accounts; scheduling and drip campaigns; and ad-hoc rules for replies, reposts,
+mentions and likes.
+
+It installs as a PWA and works offline apart from publishing. Everything you
+create lives in the browser's IndexedDB — export from **Settings → Data** to
+move between machines.
+
+Publishing needs the [`workers/social-hub`](workers/social-hub/README.md)
+Worker, which holds the OAuth tokens (encrypted), fans posts out across
+networks, and drains the schedule on a cron. Without it the console runs in
+**dry run**: everything works and nothing is published, and it says so on every
+screen where it matters.
+
+Two rules the code enforces rather than merely documents:
+
+- **No credential is ever stored in the browser.** OAuth tokens never reach it;
+  pasted secrets (a Bluesky app password, a Telegram bot token, a Discord
+  webhook) are forwarded straight to the Worker. Connecting a paste-a-secret
+  network with no backend configured is refused rather than quietly downgraded.
+- **Client accounts are connected by the client authorising the app**, never by
+  handing over a password. That survives their password changes and two-factor,
+  and they can revoke it themselves.
+
+Full guide: [`docs/BROADCAST_DESK.md`](docs/BROADCAST_DESK.md).
+
+---
+
 ## Reloadly integration
 
 A **no-code embed** — there are no backend credentials or secrets in this
@@ -165,6 +214,7 @@ finishes a session. Do not edit by hand; never delete another machine row._
 
 | Machine | Last touched (UTC) | Branch | Commit | Summary |
 | ------- | ------------------ | ------ | ------ | ------- |
+| ClaudeWeb | 2026-08-28 16:34 | claude/social-media-management-platform-0ak8tg | e9ee476 | Add Broadcast Desk: multi-account social console (PWA) + social-hub Worker |
 | Antonio | 2026-08-27 00:51 | antonio/work-protocol | 0723700 | Install shared two-machine work protocol |
 
 <!-- POSTMARK:END -->

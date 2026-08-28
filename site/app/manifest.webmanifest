@@ -1,0 +1,23 @@
+{
+  "name": "Broadcast Desk — Rullo Enterprises",
+  "short_name": "Broadcast Desk",
+  "description": "Multi-account social operations console: profiles, message generator, simultaneous posting, scheduling and automation rules.",
+  "start_url": "/app/",
+  "scope": "/app/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#FAF7EF",
+  "theme_color": "#0E7C55",
+  "categories": ["business", "productivity", "social"],
+  "icons": [
+    { "src": "/app/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/app/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/app/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/app/icons/icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Compose", "url": "/app/#/compose" },
+    { "name": "Queue", "url": "/app/#/queue" },
+    { "name": "Rules", "url": "/app/#/rules" }
+  ]
+}
