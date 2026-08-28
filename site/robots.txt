@@ -1,7 +1,4 @@
 User-agent: *
 Allow: /
 
-# The operations console is a private tool, not part of the storefront.
-Disallow: /app/
-
 Sitemap: https://rulloenterprises.com/sitemap.xml

@@ -1,0 +1,4 @@
+{
+  "//": "Marks shared/ as ES modules so the CommonJS main process can dynamic-import these files unchanged. The renderer and the Worker already treat them as modules.",
+  "type": "module"
+}

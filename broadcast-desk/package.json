@@ -1,0 +1,67 @@
+{
+  "name": "broadcast-desk",
+  "productName": "Broadcast Desk",
+  "version": "1.0.0",
+  "description": "Multi-account social operations console \u2014 run your own, your business's and your clients' accounts from one desk.",
+  "main": "main/main.js",
+  "private": true,
+  "author": "Rullo Enterprises",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "test": "node test/run.mjs",
+    "dist": "electron-builder",
+    "dist:win": "electron-builder --win",
+    "dist:mac": "electron-builder --mac",
+    "dist:linux": "electron-builder --linux",
+    "worker:deploy": "cd worker && npx wrangler deploy",
+    "worker:test": "node worker/test.mjs"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.rulloenterprises.broadcastdesk",
+    "productName": "Broadcast Desk",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main/**/*",
+      "renderer/**/*",
+      "shared/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "build/icon.png"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "icon": "build/icon.png",
+      "category": "public.app-category.business"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "icon": "build/icon.png",
+      "category": "Office"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "publish": null
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arullo1980/Rullo-enterprises-.git"
+  }
+}

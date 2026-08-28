@@ -1,19 +1,21 @@
 # Rullo Enterprises
 
-Two things live here:
+Two separate products share this repository:
 
 1. **The storefront** at **rulloenterprises.com** — selling
    [Reloadly's](https://www.reloadly.com/) full catalog: mobile airtime
    top-ups, mobile data bundles, gift cards, and utility bill payments,
-   worldwide.
-2. **Broadcast Desk** at `/app` — a social operations console for running
-   many accounts at once: personal, business, and clients' accounts managed
-   on their behalf. See [`docs/BROADCAST_DESK.md`](docs/BROADCAST_DESK.md).
+   worldwide. Plain static HTML/CSS, no build step, no dependencies.
+2. **[Broadcast Desk](broadcast-desk/README.md)** — a desktop social
+   operations console for running many accounts at once: your own, the
+   business's, and clients' accounts you post on behalf of. Electron app plus
+   a small Cloudflare Worker. Self-contained in `broadcast-desk/` and ready to
+   split into its own repository.
 
-Plain static HTML/CSS/JS. **No build step, no framework, no dependencies.**
-Checkout runs entirely inside an embedded Reloadly "Plugin V2" widget, so
-this codebase never sees or stores payment data — and the console never
-stores a social credential, for the same reason.
+The storefront's checkout runs entirely inside an embedded Reloadly "Plugin V2"
+widget, so this codebase never sees or stores payment data. Broadcast Desk keeps
+social tokens in the OS keyring and never writes one to its own database — same
+principle, different secret.
 
 ---
 
@@ -28,21 +30,19 @@ stores a social credential, for the same reason.
 │   │   └── index.html     # privacy policy (DRAFT — see "Outstanding" below)
 │   ├── css/
 │   │   └── styles.css     # storefront styles
-│   ├── app/               # Broadcast Desk — the operations console (PWA)
-│   │   ├── index.html     # app shell
-│   │   ├── manifest.webmanifest
-│   │   ├── sw.js          # service worker — offline app shell
-│   │   ├── css/app.css    # console styles (same palette, denser)
-│   │   └── js/            # ES modules, loaded per view, no bundler
 │   ├── favicon.svg        # "RE" monogram in the site's ink/paper palette
 │   ├── icons.svg          # SVG symbol sheet (currently unused)
-│   ├── robots.txt         # storefront indexed; /app/ disallowed
+│   ├── robots.txt
 │   └── sitemap.xml
 ├── workers/
-│   ├── reloadly-proxy/    # read-only Reloadly API proxy
-│   └── social-hub/        # Broadcast Desk backend — OAuth, publishing, cron
-├── docs/
-│   └── BROADCAST_DESK.md  # the console: concepts, generator syntax, rules
+│   └── reloadly-proxy/    # read-only Reloadly API proxy for the storefront
+├── broadcast-desk/        # the desktop product — see its own README
+│   ├── main/              # Electron main process: vault, OAuth, sending
+│   ├── renderer/          # the console UI
+│   ├── shared/            # network catalogue + adapters (app, relay, UI)
+│   ├── worker/            # the relay (Cloudflare Worker)
+│   ├── test/              # node test/run.mjs — no network, no Electron
+│   └── docs/              # SETUP.md, CONSOLE.md
 ├── CLAUDE_CODE_HANDOFF.md # full project brief, integration + deployment notes
 └── README.md
 ```
@@ -142,33 +142,31 @@ email is hosted on this domain, leave its `MX` records untouched.
 
 ## Broadcast Desk
 
-The console at `/app`. Runs many social accounts from one place: profiles for
-personal, business and client work; a keyword and phrase library; a message
-generator with spintax and library tokens; simultaneous posting to any set of
-accounts; scheduling and drip campaigns; and ad-hoc rules for replies, reposts,
-mentions and likes.
+A desktop app for running many social accounts at once — yours, the business's,
+and clients' accounts you operate on their behalf. Profiles, a keyword and
+phrase library, a TweetAdder-style message generator, simultaneous posting,
+scheduling and drip campaigns, and ad-hoc rules for replies, reposts and
+mentions.
 
-It installs as a PWA and works offline apart from publishing. Everything you
-create lives in the browser's IndexedDB — export from **Settings → Data** to
-move between machines.
+Eleven networks are wired: X, Instagram, TikTok, Facebook, Telegram, Discord,
+Reddit, Tumblr, WordPress, Vimeo and Pinterest — plus Bluesky, Mastodon and
+LinkedIn, which came free.
 
-Publishing needs the [`workers/social-hub`](workers/social-hub/README.md)
-Worker, which holds the OAuth tokens (encrypted), fans posts out across
-networks, and drains the schedule on a cron. Without it the console runs in
-**dry run**: everything works and nothing is published, and it says so on every
-screen where it matters.
+```sh
+cd broadcast-desk
+npm install && npm start     # run it
+npm test                     # 36 tests, no network, no Electron needed
+npm run dist:win             # build an installer
+```
 
-Two rules the code enforces rather than merely documents:
+It is a desktop app because that is where the credentials and the client video
+masters belong. A small Cloudflare Worker (`broadcast-desk/worker/`) does the
+three things a program on your desk cannot: take OAuth callbacks from networks
+that refuse a local redirect, host media for Instagram, and send scheduled posts
+while the machine is off.
 
-- **No credential is ever stored in the browser.** OAuth tokens never reach it;
-  pasted secrets (a Bluesky app password, a Telegram bot token, a Discord
-  webhook) are forwarded straight to the Worker. Connecting a paste-a-secret
-  network with no backend configured is refused rather than quietly downgraded.
-- **Client accounts are connected by the client authorising the app**, never by
-  handing over a password. That survives their password changes and two-factor,
-  and they can revoke it themselves.
-
-Full guide: [`docs/BROADCAST_DESK.md`](docs/BROADCAST_DESK.md).
+Read [`broadcast-desk/README.md`](broadcast-desk/README.md) first, then
+[`docs/SETUP.md`](broadcast-desk/docs/SETUP.md) for per-network credentials.
 
 ---
 
@@ -214,7 +212,7 @@ finishes a session. Do not edit by hand; never delete another machine row._
 
 | Machine | Last touched (UTC) | Branch | Commit | Summary |
 | ------- | ------------------ | ------ | ------ | ------- |
-| ClaudeWeb | 2026-08-28 16:34 | claude/social-media-management-platform-0ak8tg | e9ee476 | Add Broadcast Desk: multi-account social console (PWA) + social-hub Worker |
+| ClaudeWeb | 2026-08-28 18:13 | claude/social-media-management-platform-0ak8tg | b2eaf1f | Rebuild Broadcast Desk as a standalone Electron desktop product (11 networks) |
 | Antonio | 2026-08-27 00:51 | antonio/work-protocol | 0723700 | Install shared two-machine work protocol |
 
 <!-- POSTMARK:END -->

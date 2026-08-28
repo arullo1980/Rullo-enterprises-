@@ -9,23 +9,31 @@ Two things live in this repo:
 
 1. **Reloadly storefront for rulloenterprises.com** - airtime top-ups, data
    bundles, gift cards, utility bill payments, worldwide.
-2. **Broadcast Desk** (`site/app/`) - a multi-account social operations console
-   (PWA) with a message generator, simultaneous posting, scheduling and an
-   ad-hoc rule engine. Backend is `workers/social-hub`. See
-   `docs/BROADCAST_DESK.md`.
+2. **Broadcast Desk** (`broadcast-desk/`) - a **separate product**: an Electron
+   desktop app for running many social accounts, operated BY us FOR clients.
+   Eleven networks. Self-contained and ready to split into its own repo.
+   See `broadcast-desk/README.md` and `broadcast-desk/docs/SETUP.md`.
 
-- **Stack:** plain static HTML/CSS/JS. No build step, no framework, no
-  dependencies - keep it that way. Cloudflare Workers for anything that needs a
-  secret: `workers/reloadly-proxy` (PR #5) and `workers/social-hub`.
-- **State:** storefront built and rendering locally, **not yet live**. The
-  console is built and tested; it runs in dry run until the Worker is deployed.
+- **Storefront stack:** plain static HTML/CSS. No build step, no framework, no
+  dependencies - keep it that way. `workers/reloadly-proxy` holds its secrets.
+- **Broadcast Desk stack:** Electron (main = CommonJS, renderer = ES modules
+  served over a custom `app://` protocol), `shared/` ES modules used by the
+  renderer, the main process AND the Cloudflare Worker, so adapters are written
+  once. No frontend framework, no bundler.
+- **State:** storefront built and rendering locally, **not yet live**. Broadcast
+  Desk is built, tested (`cd broadcast-desk && npm test`, 36 tests) and packages
+  cleanly; it runs in dry run until an account is connected.
 
 **Broadcast Desk invariants** - do not regress these:
-- Never store a social credential in the browser. Tokens live in the Worker,
-  encrypted; account rows hold only an opaque connection id.
+- Never write a social credential to the renderer's database. Tokens live in the
+  main process, encrypted via Electron `safeStorage` (OS keyring); a copy only
+  reaches the relay for accounts explicitly marked unattended.
 - Client accounts are connected by the client authorising the app, never by
   collecting their password.
-- Never report a post as sent when it was simulated.
+- Never report a post as sent when it was simulated, or as public when the
+  network made it private (TikTok while unaudited).
+- X charges per post ($0.015, $0.20 with a link). The link block and the monthly
+  spend cap are checked before the request leaves - never after.
 
 **Current priority: integration.**
 
