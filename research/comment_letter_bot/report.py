@@ -281,8 +281,8 @@ def render_screen(result):
         lines.append(_wrap(
             ">= marks a floor rather than a measurement: the company's last "
             "letter sits at the edge of the census, so the real gap is at "
-            "least this long and possibly much longer. Deepen it with "
-            "--screen-years."))
+            "least this long and possibly much longer. Start the census "
+            "earlier with --screen-from."))
         if result.get("never_in_window"):
             lines.append(_wrap(
                 "%s %s in the universe drew no letter anywhere in the %s-year "
