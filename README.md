@@ -150,13 +150,19 @@ don't assume they exist.
 `research/` holds an owner-facing command-line tool that is unrelated to the
 storefront: a **SEC comment-letter bot** that scans EDGAR for staff comment
 letters (`UPLOAD`) and company responses (`CORRESP`) on a ticker, summarises
-everything filed since a given trade date, and reads the result against the
-stock's own price history.
+everything filed since a given trade date, reads the private window between a
+letter being written and EDGAR releasing it for insider and institutional
+filings, and reads the result against the stock's own price history. It also
+runs market-wide screens for the most-commented and longest-uncommented
+registrants.
 
 ```bash
-export SEC_USER_AGENT="Your Name your@email"
 python3 research/clbot.py AAPL
+python3 research/clbot.py --screen active --screen-years 5
 ```
+
+It identifies itself to EDGAR as `info@rulloenterprises.com`; override with
+`SEC_USER_AGENT` if you need a different contact.
 
 Standard library only, like the rest of the repository. It lives outside
 `site/`, so the Pages workflow never publishes it. See `research/README.md`
@@ -188,7 +194,7 @@ finishes a session. Do not edit by hand; never delete another machine row._
 
 | Machine | Last touched (UTC) | Branch | Commit | Summary |
 | ------- | ------------------ | ------ | ------ | ------- |
-| ClaudeWeb | 2026-09-06 17:05 | claude/sec-comment-letter-bot-lo5ur4 | e9ee476 | Add research/: SEC comment-letter bot (EDGAR UPLOAD/CORRESP scan, letter scoring, price event study) |
+| ClaudeWeb | 2026-09-06 17:29 | claude/sec-comment-letter-bot-lo5ur4 | 5bd5e03 | Private-window insider scan, comment-letter census screens, dissemination-date fix |
 | Antonio | 2026-08-27 00:51 | antonio/work-protocol | 0723700 | Install shared two-machine work protocol |
 
 <!-- POSTMARK:END -->

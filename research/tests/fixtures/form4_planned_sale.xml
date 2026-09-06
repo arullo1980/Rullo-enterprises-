@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<ownershipDocument>
+  <schemaVersion>X0508</schemaVersion>
+  <documentType>4</documentType>
+  <periodOfReport>2025-11-14</periodOfReport>
+  <issuer>
+    <issuerCik>0000099999</issuerCik>
+    <issuerName>EXAMPLE CORP</issuerName>
+    <issuerTradingSymbol>EXC</issuerTradingSymbol>
+  </issuer>
+  <reportingOwner>
+    <reportingOwnerId>
+      <rptOwnerCik>0001111111</rptOwnerCik>
+      <rptOwnerName>DOE JOHN</rptOwnerName>
+    </reportingOwnerId>
+    <reportingOwnerRelationship>
+      <isDirector>0</isDirector>
+      <isOfficer>1</isOfficer>
+      <officerTitle>Chief Financial Officer</officerTitle>
+      <isTenPercentOwner>0</isTenPercentOwner>
+    </reportingOwnerRelationship>
+  </reportingOwner>
+  <aff10b5One>1</aff10b5One>
+  <nonDerivativeTable>
+    <nonDerivativeTransaction>
+      <securityTitle><value>Common Stock</value></securityTitle>
+      <transactionDate><value>2025-11-14</value></transactionDate>
+      <transactionCoding>
+        <transactionFormType>4</transactionFormType>
+        <transactionCode>S</transactionCode>
+      </transactionCoding>
+      <transactionAmounts>
+        <transactionShares><value>40000</value></transactionShares>
+        <transactionPricePerShare><value>25.50</value></transactionPricePerShare>
+        <transactionAcquiredDisposedCode><value>D</value></transactionAcquiredDisposedCode>
+      </transactionAmounts>
+    </nonDerivativeTransaction>
+    <nonDerivativeTransaction>
+      <securityTitle><value>Common Stock</value></securityTitle>
+      <transactionDate><value>2025-11-14</value></transactionDate>
+      <transactionCoding>
+        <transactionFormType>4</transactionFormType>
+        <transactionCode>F</transactionCode>
+      </transactionCoding>
+      <transactionAmounts>
+        <transactionShares><value>1200</value></transactionShares>
+        <transactionPricePerShare><value>25.50</value></transactionPricePerShare>
+        <transactionAcquiredDisposedCode><value>D</value></transactionAcquiredDisposedCode>
+      </transactionAmounts>
+    </nonDerivativeTransaction>
+  </nonDerivativeTable>
+</ownershipDocument>

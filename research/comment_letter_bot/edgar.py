@@ -45,12 +45,18 @@ class Filing:
                  report_date=None, items=None):
         self.cik = int(cik)
         self.form = form
+        # For an UPLOAD or CORRESP this is the date on the letter itself, NOT
+        # the date the public could read it. EDGAR holds a review thread back
+        # and disseminates the whole thread at once once the review closes.
         self.filing_date = filing_date          # datetime.date
         self.accession = accession
         self.primary_document = primary_document
         self.report_date = report_date
         self.items = items or ""
         self.text = None                        # filled in by fetch_filing_text
+        self.public_date = None                 # dissemination date
+        self.was_private = False
+        self.accepted_at = None
 
     @property
     def accession_nodash(self):
@@ -66,12 +72,38 @@ class Filing:
         return "%s/%s.txt" % (self.directory_url, self.accession)
 
     @property
+    def primary_document_url(self):
+        """The primary document, with EDGAR's XSL viewer prefix removed.
+
+        Ownership forms are listed as `xslF345X05/wk-form4_123.xml`, which is
+        the rendered HTML. Dropping the prefix gives the raw XML beside it.
+        """
+        document = (self.primary_document or "").split("/")[-1]
+        return "%s/%s" % (self.directory_url, document) if document else None
+
+    @property
     def index_url(self):
         return "%s/%s-index.htm" % (self.directory_url, self.accession)
 
     @property
     def is_staff_letter(self):
         return self.form in config.LETTER_FORMS
+
+    @property
+    def private_window_days(self):
+        """Calendar days the letter existed before EDGAR disseminated it."""
+        if not self.public_date:
+            return None
+        return (self.public_date - self.filing_date).days
+
+    @property
+    def effective_public_date(self):
+        """The date to anchor any market study on.
+
+        Falls back to the filing date when the header is missing, which is the
+        conservative choice: it can only understate the private window.
+        """
+        return self.public_date or self.filing_date
 
     def __repr__(self):
         return "Filing(%s, %s)" % (self.form, self.filing_date)
@@ -164,7 +196,7 @@ def _rows_from_block(block):
 
 
 def fetch_filings(fetcher, company, forms=config.REVIEW_FORMS, since=None,
-                  include_history=True):
+                  until=None, include_history=True):
     """All filings of the given forms, newest first.
 
     EDGAR keeps only the most recent ~1000 filings in the main submissions
@@ -201,6 +233,8 @@ def fetch_filings(fetcher, company, forms=config.REVIEW_FORMS, since=None,
             filed = _parse_date(row["filingDate"])
             if filed is None or (since and filed < since):
                 continue
+            if until and filed > until:
+                continue
             filings.append(Filing(
                 cik=company.cik,
                 form=form,
@@ -215,6 +249,12 @@ def fetch_filings(fetcher, company, forms=config.REVIEW_FORMS, since=None,
 
 
 # ------------------------------------------------------- document extraction --
+
+# EDGAR stamps the dissemination date on the first two lines of every full
+# submission, and marks a filing that was held back with <PRIVATE-TO-PUBLIC>.
+_DISSEMINATED_RE = re.compile(r"<SEC-DOCUMENT>[^\n:]*:\s*(\d{8})")
+_ACCEPTANCE_RE = re.compile(r"<ACCEPTANCE-DATETIME>(\d{14})")
+_PRIVATE_MARKER = "<PRIVATE-TO-PUBLIC>"
 
 _DOCUMENT_RE = re.compile(r"<DOCUMENT>(.*?)</DOCUMENT>", re.S | re.I)
 _TAG_RE = re.compile(r"<(TYPE|FILENAME|DESCRIPTION)>([^\n<]*)", re.I)
@@ -282,12 +322,48 @@ def extract_text(raw):
     return ""
 
 
+def parse_submission_header(raw, filing=None):
+    """Pull the dissemination date and acceptance stamp off a submission.
+
+    This is the only place the *public* date of a comment letter can be read.
+    `filingDate` in the submissions API is the date typed on the letter, and
+    for a comment letter that date is inside the SEC's private window - often
+    by weeks, sometimes by months.
+    """
+    head = raw[:4000]
+    info = {"public_date": None, "was_private": _PRIVATE_MARKER in head,
+            "accepted_at": None}
+
+    disseminated = _DISSEMINATED_RE.search(head)
+    if disseminated:
+        try:
+            info["public_date"] = datetime.datetime.strptime(
+                disseminated.group(1), "%Y%m%d").date()
+        except ValueError:
+            pass
+
+    accepted = _ACCEPTANCE_RE.search(head)
+    if accepted:
+        try:
+            info["accepted_at"] = datetime.datetime.strptime(
+                accepted.group(1), "%Y%m%d%H%M%S")
+        except ValueError:
+            pass
+
+    if filing is not None:
+        filing.public_date = info["public_date"]
+        filing.was_private = info["was_private"]
+        filing.accepted_at = info["accepted_at"]
+    return info
+
+
 def fetch_filing_text(fetcher, filing):
     """Fetch and cache the readable text of a filing. Returns '' on failure."""
     if filing.text is not None:
         return filing.text
     try:
         raw = fetcher.get_text(filing.submission_url, max_age=None)
+        parse_submission_header(raw, filing)
         filing.text = extract_text(raw)
     except FetchError:
         filing.text = ""

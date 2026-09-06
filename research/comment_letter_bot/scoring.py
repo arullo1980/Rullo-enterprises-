@@ -45,12 +45,13 @@ def decay_weight(age_days, half_life=HALF_LIFE):
 
 
 class Contribution:
-    def __init__(self, analysis, weight, event):
+    def __init__(self, analysis, weight, event, insider=None):
         self.analysis = analysis
         self.weight = weight
         self.raw = analysis.score
         self.weighted = analysis.score * weight
         self.event = event
+        self.insider = insider          # (points, notes) or None
 
     @property
     def filing(self):
@@ -63,6 +64,8 @@ class Verdict:
         self.headline = ""
         self.composite = 0.0
         self.fundamental = 0.0
+        self.letter_pressure = 0.0
+        self.insider_pressure = 0.0
         self.priced_in = None
         self.residual = 0.0
         self.momentum = 0.0
@@ -79,6 +82,8 @@ class Verdict:
             "headline": self.headline,
             "composite": round(self.composite, 1),
             "fundamental_pressure": round(self.fundamental, 1),
+            "letter_pressure": round(self.letter_pressure, 1),
+            "insider_pressure": round(self.insider_pressure, 1),
             "priced_in_points": (None if self.priced_in is None
                                  else round(self.priced_in, 1)),
             "residual": round(self.residual, 1),
@@ -98,10 +103,15 @@ def _band(composite):
     return "NEUTRAL", ""
 
 
-def evaluate(analyses, price=None, events=None, as_of=None):
-    """`analyses` newest first; `events` maps accession -> event_return dict."""
+def evaluate(analyses, price=None, events=None, as_of=None, insider_signals=None):
+    """Combine letters, private-window insider activity, and price context.
+
+    `analyses` newest first. `events` maps accession -> event_return dict.
+    `insider_signals` maps accession -> (points, notes) from insiders.signal().
+    """
     as_of = as_of or datetime.date.today()
     events = events or {}
+    insider_signals = insider_signals or {}
     verdict = Verdict()
 
     # Acceleration requests and no-review notices are filed on the same forms
@@ -120,15 +130,25 @@ def evaluate(analyses, price=None, events=None, as_of=None):
         return verdict
 
     # -- 1. fundamental pressure ------------------------------------------
-    total = 0.0
+    # Age is measured from the date the letter became public. A letter written
+    # in September and disseminated in January is four months old as a fact
+    # and one week old as news; the market can only have reacted to the news.
+    total, insider_total = 0.0, 0.0
     for analysis in analyses:
-        age = (as_of - analysis.filing.filing_date).days
+        accession = analysis.filing.accession
+        age = (as_of - analysis.filing.effective_public_date).days
         weight = decay_weight(age)
-        contribution = Contribution(analysis, weight,
-                                    events.get(analysis.filing.accession))
+        contribution = Contribution(analysis, weight, events.get(accession),
+                                    insider_signals.get(accession))
         verdict.contributions.append(contribution)
         total += contribution.weighted
-    verdict.fundamental = _clamp(total, -100.0, 100.0)
+        if contribution.insider:
+            insider_total += contribution.insider[0] * weight
+
+    verdict.letter_pressure = _clamp(total, -100.0, 100.0)
+    verdict.insider_pressure = _clamp(insider_total, -40.0, 20.0)
+    verdict.fundamental = _clamp(
+        verdict.letter_pressure + verdict.insider_pressure, -100.0, 100.0)
 
     if staff:
         newest = staff[0]
@@ -210,6 +230,10 @@ def evaluate(analyses, price=None, events=None, as_of=None):
             "The staff closed its review while the stock underperformed into "
             "the news - a resolved-overhang setup rather than a new problem.")
 
+    for contribution in verdict.contributions:
+        for note in (contribution.insider[1] if contribution.insider else []):
+            verdict.flags.append(note)
+
     top = sorted(verdict.contributions, key=lambda c: c.weighted)[:3]
     for contribution in top:
         if contribution.weighted >= -1.0:
@@ -239,4 +263,6 @@ def _confidence(verdict, readable_letters, measured_events):
     score += 1 if abs(verdict.composite) >= 25 else 0
     score += 1 if measured_events >= 1 else 0
     score += 1 if verdict.rounds >= 2 else 0
-    return {0: "low", 1: "low", 2: "moderate", 3: "moderate", 4: "high"}[score]
+    score += 1 if verdict.insider_pressure else 0
+    return {0: "low", 1: "low", 2: "moderate", 3: "moderate",
+            4: "high", 5: "high"}[score]

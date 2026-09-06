@@ -254,13 +254,30 @@ class Analysis:
         return found
 
     @staticmethod
-    def _topics(text):
+    def evidence_factor(hits):
+        """How much of a topic's weight one letter's evidence has earned.
+
+        A letter that mentions revenue recognition once, in a heading or a
+        passing citation, is not a letter about revenue recognition. Requiring
+        repetition before a heavy topic counts in full is what stops a single
+        incidental word from dominating a score - which it did, and which is
+        why this exists.
+        """
+        if hits <= 0:
+            return 0.0
+        return min(1.0, 0.5 + 0.25 * (hits - 1))
+
+    @classmethod
+    def _topics(cls, text):
         found = []
         for topic in taxonomy.TOPICS:
             hits = topic.hits(text)
             if hits:
                 found.append((topic, hits))
-        found.sort(key=lambda pair: (pair[0].weight, pair[1]), reverse=True)
+        # Rank by the evidence actually present, so the headline topic is the
+        # one the letter argues about rather than the heaviest word in it.
+        found.sort(key=lambda pair: pair[0].weight * cls.evidence_factor(pair[1]),
+                   reverse=True)
         return found
 
     # -- scoring -----------------------------------------------------------
@@ -278,8 +295,11 @@ class Analysis:
             return 0.0
 
         # Topic pressure: the heaviest topic in full, the rest at a discount,
-        # because one letter about six things is not six letters.
-        weights = sorted((topic.weight for topic, _ in self.topics), reverse=True)
+        # because one letter about six things is not six letters. Each topic's
+        # weight is first scaled by how much evidence the letter gives for it.
+        weights = sorted(
+            (topic.weight * self.evidence_factor(hits)
+             for topic, hits in self.topics), reverse=True)
         pressure = 0.0
         for rank, weight in enumerate(weights[:5]):
             pressure += weight * (0.45 ** rank)

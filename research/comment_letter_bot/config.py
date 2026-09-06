@@ -13,15 +13,13 @@ import pathlib
 # The SEC requires a descriptive User-Agent with a contact address on every
 # automated request. Anonymous or browser-spoofed traffic gets throttled and
 # then blocked. Set SEC_USER_AGENT to "Your Name your@email" before real use.
-DEFAULT_USER_AGENT = "Rullo Enterprises comment-letter-bot (set SEC_USER_AGENT)"
+CONTACT_EMAIL = "info@rulloenterprises.com"
+DEFAULT_USER_AGENT = "Rullo Enterprises comment-letter-bot %s" % CONTACT_EMAIL
 
 
 def user_agent():
+    """SEC_USER_AGENT overrides; otherwise identify as Rullo Enterprises."""
     return os.environ.get("SEC_USER_AGENT", "").strip() or DEFAULT_USER_AGENT
-
-
-def user_agent_is_default():
-    return not os.environ.get("SEC_USER_AGENT", "").strip()
 
 
 # ------------------------------------------------------------------- hosts --
@@ -58,6 +56,23 @@ MAX_RETRIES = 4
 LETTER_FORMS = ("UPLOAD",)      # staff comment letter to the company
 RESPONSE_FORMS = ("CORRESP",)   # company's written response
 REVIEW_FORMS = LETTER_FORMS + RESPONSE_FORMS
+
+# Forms worth watching inside the private window between a letter being
+# written and EDGAR disseminating it. Form 4 is the insider transaction
+# report; 144 is an affiliate's notice of intent to sell; the 13D/G
+# amendments are institutional holders crossing a reporting threshold.
+INSIDER_FORMS = ("4", "4/A")
+AFFILIATE_SALE_FORMS = ("144", "144/A")
+INSTITUTIONAL_FORMS = ("SC 13D", "SC 13D/A", "SC 13G", "SC 13G/A",
+                       "SCHEDULE 13D", "SCHEDULE 13D/A",
+                       "SCHEDULE 13G", "SCHEDULE 13G/A")
+WINDOW_FORMS = INSIDER_FORMS + AFFILIATE_SALE_FORMS + INSTITUTIONAL_FORMS
+
+# Form 4 transaction codes. Open-market buys and sells are the only ones that
+# say anything about conviction; the rest are grants, exercises, and tax
+# withholding that happen on a schedule nobody chose this month.
+OPEN_MARKET_CODES = {"P": "open-market purchase", "S": "open-market sale"}
+DISCRETIONARY_CODES = {"P", "S", "F", "M", "G"}
 
 # When the user has never traded the name, look back this far instead.
 DEFAULT_LOOKBACK_DAYS = 1095

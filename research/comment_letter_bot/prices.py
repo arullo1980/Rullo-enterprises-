@@ -166,6 +166,32 @@ def event_return(series, benchmark, event_date, window=config.EVENT_WINDOW_DAYS)
             "window": window, "complete": True}
 
 
+def window_return(series, benchmark, start, end):
+    """Return between two calendar dates, net of the benchmark.
+
+    Used for the private window - what the stock did between a letter being
+    written and EDGAR making it public. Unlike the event study this is not a
+    reaction to anything the market could see, which is exactly why it is
+    reported separately and never treated as one.
+    """
+    if not start or not end or end <= start:
+        return None
+    first = series.close_on_or_before(start)
+    last = series.close_on_or_before(end)
+    if not first or not last:
+        return None
+    raw = (last / first - 1.0) * 100.0
+
+    abnormal = None
+    if benchmark is not None:
+        b_first = benchmark.close_on_or_before(start)
+        b_last = benchmark.close_on_or_before(end)
+        if b_first and b_last:
+            abnormal = raw - (b_last / b_first - 1.0) * 100.0
+    return {"raw": raw, "abnormal": abnormal,
+            "days": (end - start).days}
+
+
 def snapshot(series):
     """The handful of price facts the report prints."""
     sma50 = series.sma(50)

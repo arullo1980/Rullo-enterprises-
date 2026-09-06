@@ -4,7 +4,8 @@ import argparse
 import datetime
 import sys
 
-from . import config, edgar, letters as letters_mod, llm, prices, report, scoring
+from . import (census, config, edgar, insiders, letters as letters_mod, llm,
+               prices, report, scoring)
 from .http import Fetcher
 
 
@@ -69,7 +70,7 @@ def _ask_float(prompt):
 
 def analyse(fetcher, identifier, last_trade=None, side=None, entry_price=None,
             lookback_days=config.DEFAULT_LOOKBACK_DAYS, limit=None,
-            with_prices=True, as_of=None):
+            with_prices=True, with_insiders=True, as_of=None):
     """Do the whole job and return the result dictionary the report renders."""
     as_of = as_of or datetime.date.today()
     company = edgar.resolve_company(fetcher, identifier)
@@ -101,15 +102,23 @@ def analyse(fetcher, identifier, last_trade=None, side=None, entry_price=None,
         price_error = ("%s has no ticker in the SEC's mapping (private filer or "
                        "delisted); no price context available." % company.name)
 
+    # The event study runs from the dissemination date, which is the first
+    # moment the market could price the letter at all.
     events = {}
     if series is not None:
         for analysis in analyses:
-            event = prices.event_return(series, benchmark, analysis.filing.filing_date)
+            event = prices.event_return(series, benchmark,
+                                        analysis.filing.effective_public_date)
             if event:
                 events[analysis.filing.accession] = event
 
+    threads, insider_signals = [], {}
+    if with_insiders:
+        threads, insider_signals = _read_private_windows(
+            fetcher, company, analyses, series, benchmark)
+
     verdict = scoring.evaluate(analyses, price=price_snapshot, events=events,
-                               as_of=as_of)
+                               as_of=as_of, insider_signals=insider_signals)
 
     # -- assemble ----------------------------------------------------------
     letter_rows = []
@@ -118,6 +127,9 @@ def analyse(fetcher, identifier, last_trade=None, side=None, entry_price=None,
         letter_rows.append({
             "form": analysis.filing.form,
             "filed": analysis.filing.filing_date.isoformat(),
+            "public": (analysis.filing.public_date.isoformat()
+                       if analysis.filing.public_date else None),
+            "private_window_days": analysis.filing.private_window_days,
             "accession": analysis.filing.accession,
             "url": analysis.filing.index_url,
             "subject": analysis.letter.subject,
@@ -158,6 +170,7 @@ def analyse(fetcher, identifier, last_trade=None, side=None, entry_price=None,
             "administrative": sum(1 for a in analyses if a.is_administrative),
         },
         "letters": letter_rows,
+        "private_windows": threads,
         "price": price_snapshot,
         "price_error": price_error,
         "verdict": verdict.as_dict(),
@@ -165,7 +178,199 @@ def analyse(fetcher, identifier, last_trade=None, side=None, entry_price=None,
     return result, analyses, company
 
 
+def _read_private_windows(fetcher, company, analyses, series, benchmark):
+    """Read the issuer's feed across each review thread's private window.
+
+    Letters released on the same day are one thread - EDGAR disseminates a
+    whole review at once - so the window is a property of the thread, not of
+    each letter. Reading it once per thread instead of once per letter keeps
+    the request count down and is the correct unit anyway.
+    """
+    threads, signals = [], {}
+    grouped = {}
+    # Each window costs one request per Form 4 inside it. Scanning the most
+    # recent few threads is where the information is; a review from 2019 is
+    # not going to change a position taken today.
+    max_windows = 4
+    for analysis in analyses:
+        filing = analysis.filing
+        if not filing.was_private or not filing.public_date:
+            continue
+        grouped.setdefault(filing.public_date, []).append(analysis)
+
+    for public_date in sorted(grouped, reverse=True)[:max_windows]:
+        group = grouped[public_date]
+        start = min(a.filing.filing_date for a in group)
+        if (public_date - start).days < 3:
+            continue                    # no meaningful window to look at
+        activity = insiders.fetch_window_activity(
+            fetcher, company, start, public_date, letter=group[0])
+        if activity is None:
+            continue
+
+        # Score the window against the most substantive letter it covers.
+        worst = min(group, key=lambda a: a.score)
+        points, notes = activity.signal(worst.score)
+        if points:
+            signals[worst.filing.accession] = (points, notes)
+        elif notes:
+            signals[worst.filing.accession] = (0.0, notes)
+
+        drift = (prices.window_return(series, benchmark, start, public_date)
+                 if series is not None else None)
+        threads.append({
+            "letters_written_from": start.isoformat(),
+            "public_on": public_date.isoformat(),
+            "days": (public_date - start).days,
+            "letters": [{"form": a.filing.form,
+                         "dated": a.filing.filing_date.isoformat(),
+                         "score": a.score} for a in group],
+            "worst_letter_score": worst.score,
+            "insider_points": points,
+            "notes": notes,
+            "price_drift": drift,
+            "trades": [{"owner": t.owner, "role": t.role_text,
+                        "date": t.date.isoformat(), "code": t.code,
+                        "action": t.label, "shares": t.shares,
+                        "price": t.price, "value": t.value,
+                        "planned_10b5_1": t.planned,
+                        "url": t.filing.index_url}
+                       for t in sorted(activity.trades, key=lambda t: t.date)
+                       if t.open_market],
+            "other_filings": [{"form": f.form, "filed": f.filing_date.isoformat(),
+                               "url": f.index_url}
+                              for f in activity.other_filings],
+        })
+    return threads, signals
+
+
 # ------------------------------------------------------------------- main --
+
+def run_screen(args):
+    """Market-wide screens built from a comment-letter census."""
+    fetcher = Fetcher(use_cache=not args.no_cache)
+    today = datetime.date.today()
+    start = datetime.date(today.year - args.screen_years, 1, 1)
+
+    def progress(q_start, q_end, total):
+        print("  scanning %s..%s  (%d documents)" % (q_start, q_end, total),
+              file=sys.stderr)
+
+    print("Building comment-letter census from %s to %s - first run fetches a "
+          "few hundred pages, later runs read the cache." % (start, today),
+          file=sys.stderr)
+    registrants = census.build(fetcher, start, today, progress=progress)
+    print("  %d registrants, %d letters.\n"
+          % (len(registrants), sum(r.count for r in registrants.values())),
+          file=sys.stderr)
+
+    universe, universe_label = None, "every filer in the census"
+    if args.watchlist:
+        universe, universe_label = _load_watchlist(fetcher, args.watchlist)
+    elif args.screen == "overdue":
+        universe = set(census.ticker_universe(fetcher))
+        universe_label = "currently listed filers"
+
+    result = {
+        "screen": args.screen,
+        "census": {"from": start.isoformat(), "to": today.isoformat(),
+                   "registrants": len(registrants),
+                   "letters": sum(r.count for r in registrants.values())},
+        "universe": universe_label,
+        "rows": [],
+    }
+
+    if args.screen == "active":
+        pool = registrants
+        if args.listed_only or args.watchlist:
+            allowed = universe if universe is not None else set(
+                census.ticker_universe(fetcher))
+            pool = {cik: r for cik, r in registrants.items() if cik in allowed}
+            result["universe"] = (universe_label if args.watchlist
+                                  else "currently listed filers")
+        current = census.ticker_universe(fetcher)
+        for registrant in census.most_active(pool, limit=args.screen_limit):
+            name, ticker = current.get(registrant.cik,
+                                       (registrant.name, registrant.ticker))
+            result["rows"].append({
+                "cik": registrant.cik, "name": name or registrant.name,
+                "ticker": ticker or registrant.ticker,
+                "letters": registrant.count,
+                "threads": registrant.threads(),
+                "longest_thread_rounds": registrant.rounds_in_longest_thread(),
+                "first": registrant.first.isoformat(),
+                "last": registrant.last.isoformat(),
+            })
+    else:
+        census_days = (today - start).days
+        rows = []
+
+        # Names with no letter anywhere in the census are the most overdue of
+        # all - their gap is at least the whole census window. They are only
+        # folded in on request, because in a market-wide run there are
+        # thousands of them and nothing in this data breaks the tie.
+        if universe is not None:
+            silent = census.never_in_window(registrants, universe)
+            result["never_in_window"] = len(silent)
+            result["never_included"] = bool(args.include_never)
+            if args.include_never:
+                names = census.ticker_universe(fetcher)
+                check_ages = len(silent) <= census.AGE_CHECK_LIMIT
+                for cik in silent:
+                    name, ticker = names.get(cik, ("CIK %d" % cik, ""))
+                    since = (census.first_filing_date(fetcher, cik)
+                             if check_ages else None)
+                    new = bool(since and since > start)
+                    rows.append({"cik": cik, "name": name, "ticker": ticker,
+                                 "letters": 0, "last": None,
+                                 "days_since": (today - since).days if new
+                                 else census_days,
+                                 "years_since": round(
+                                     ((today - since).days if new
+                                      else census_days) / 365.25, 1),
+                                 "censored": not new,
+                                 "registrant_since": since.isoformat()
+                                 if since else None,
+                                 "new_registrant": new})
+
+        # The census carries the company name as it read on the letter, which
+        # for an old letter can be a name the company no longer uses.
+        current = census.ticker_universe(fetcher) if universe is not None else {}
+        for registrant, days in census.longest_without(
+                registrants, universe=universe, as_of=today, limit=None):
+            name, ticker = current.get(registrant.cik,
+                                       (registrant.name, registrant.ticker))
+            rows.append({
+                "cik": registrant.cik, "name": name or registrant.name,
+                "ticker": ticker or registrant.ticker,
+                "letters": registrant.count,
+                "last": registrant.last.isoformat(), "days_since": days,
+                "years_since": round(days / 365.25, 1),
+                "censored": census.is_censored(registrant, start),
+            })
+
+        rows.sort(key=lambda row: (row["days_since"], row["name"]), reverse=True)
+        result["rows"] = rows[:args.screen_limit]
+        result["census_years"] = round(census_days / 365.25, 1)
+
+    print(report.render_json(result) if args.json
+          else report.render_screen(result))
+    return 0
+
+
+def _load_watchlist(fetcher, path):
+    """Read a file of tickers or CIKs, one per line, into a set of CIKs."""
+    with open(path, encoding="utf-8") as handle:
+        entries = [line.strip() for line in handle
+                   if line.strip() and not line.startswith("#")]
+    universe = set()
+    for entry in entries:
+        try:
+            universe.add(edgar.resolve_company(fetcher, entry).cik)
+        except edgar.NotFound:
+            print("  watchlist: skipping unresolved %r" % entry, file=sys.stderr)
+    return universe, "%d names from %s" % (len(universe), path)
+
 
 def build_parser():
     parser = argparse.ArgumentParser(
@@ -189,6 +394,9 @@ def build_parser():
                         help="never prompt; use flags and defaults only")
     parser.add_argument("--no-prices", action="store_true",
                         help="skip price history entirely")
+    parser.add_argument("--no-insiders", action="store_true",
+                        help="skip the private-window insider and institutional "
+                             "filing scan")
     parser.add_argument("--no-cache", action="store_true",
                         help="bypass the on-disk response cache")
     parser.add_argument("--llm", action="store_true",
@@ -196,6 +404,27 @@ def build_parser():
     parser.add_argument("--json", action="store_true", help="emit JSON only")
     parser.add_argument("--full-text", metavar="ACCESSION",
                         help="print the extracted text of one filing and exit")
+
+    screen = parser.add_argument_group("market-wide screens")
+    screen.add_argument("--screen", choices=("active", "overdue"),
+                        help="'active': most comment letters in the window. "
+                             "'overdue': longest since the last one.")
+    screen.add_argument("--screen-years", type=int, default=10,
+                        help="years of history to census (default: %(default)s). "
+                             "A shallow census makes 'overdue' meaningless: "
+                             "everything older than the window looks identical.")
+    screen.add_argument("--screen-limit", type=int, default=25,
+                        help="rows to print (default: %(default)s)")
+    screen.add_argument("--watchlist", metavar="FILE",
+                        help="restrict a screen to tickers or CIKs listed in "
+                             "this file, one per line")
+    screen.add_argument("--listed-only", action="store_true",
+                        help="restrict --screen active to filers that currently "
+                             "have a ticker, filtering out serial Reg A+ and "
+                             "shelf filers you cannot trade")
+    screen.add_argument("--include-never", action="store_true",
+                        help="on --screen overdue, also list names with no "
+                             "letter anywhere in the census window")
     return parser
 
 
@@ -203,9 +432,8 @@ def main(argv=None):
     args = build_parser().parse_args(argv)
     interactive = not args.no_input and sys.stdin.isatty()
 
-    if config.user_agent_is_default():
-        print("note: set SEC_USER_AGENT=\"Your Name your@email\" - EDGAR "
-              "throttles unidentified traffic.\n", file=sys.stderr)
+    if args.screen:
+        return run_screen(args)
 
     ticker = args.ticker
     if not ticker:
@@ -250,7 +478,7 @@ def main(argv=None):
     result, analyses, company = analyse(
         fetcher, ticker, last_trade=last_trade, side=side, entry_price=entry_price,
         lookback_days=args.lookback_days, limit=args.limit,
-        with_prices=not args.no_prices)
+        with_prices=not args.no_prices, with_insiders=not args.no_insiders)
 
     if args.llm:
         note = llm.enrich(result, analyses, company.name)
