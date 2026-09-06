@@ -26,10 +26,6 @@ this codebase never sees or stores payment data.
 │   ├── icons.svg          # SVG symbol sheet (currently unused)
 │   ├── robots.txt
 │   └── sitemap.xml
-├── research/              # owner research tooling (NOT deployed; see below)
-│   ├── clbot.py           # SEC comment-letter bot launcher
-│   ├── comment_letter_bot/
-│   └── tests/
 ├── CLAUDE_CODE_HANDOFF.md # full project brief, integration + deployment notes
 └── README.md
 ```
@@ -145,31 +141,6 @@ don't assume they exist.
 
 ---
 
-## Research tooling (not deployed)
-
-`research/` holds an owner-facing command-line tool that is unrelated to the
-storefront: a **SEC comment-letter bot** that scans EDGAR for staff comment
-letters (`UPLOAD`) and company responses (`CORRESP`) on a ticker, summarises
-everything filed since a given trade date, reads the private window between a
-letter being written and EDGAR releasing it for insider and institutional
-filings, and reads the result against the stock's own price history. It also
-runs market-wide screens for the most-commented and longest-uncommented
-registrants.
-
-```bash
-python3 research/clbot.py AAPL
-python3 research/clbot.py --screen active --screen-years 5
-```
-
-It identifies itself to EDGAR as `info@rulloenterprises.com`; override with
-`SEC_USER_AGENT` if you need a different contact.
-
-Standard library only, like the rest of the repository. It lives outside
-`site/`, so the Pages workflow never publishes it. See `research/README.md`
-for the scoring model and its limits.
-
----
-
 ## Outstanding
 
 Tracked in detail in `CLAUDE_CODE_HANDOFF.md`:
@@ -194,7 +165,6 @@ finishes a session. Do not edit by hand; never delete another machine row._
 
 | Machine | Last touched (UTC) | Branch | Commit | Summary |
 | ------- | ------------------ | ------ | ------ | ------- |
-| ClaudeWeb | 2026-09-06 19:22 | claude/sec-comment-letter-bot-lo5ur4 | 643459c | Verify 2010 census (137k letters); fix --screen-from footnote |
 | Antonio | 2026-08-27 00:51 | antonio/work-protocol | 0723700 | Install shared two-machine work protocol |
 
 <!-- POSTMARK:END -->
