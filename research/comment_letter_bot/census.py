@@ -128,25 +128,49 @@ def _fetch_page(fetcher, forms, start, end, offset, closed):
     return fetcher.get_json(url, max_age=None if closed else 3600)
 
 
+def _months(start, end):
+    """Yield (first, last) for each calendar month overlapping the range."""
+    first = datetime.date(start.year, start.month, 1)
+    while first <= end:
+        next_first = (datetime.date(first.year + 1, 1, 1) if first.month == 12
+                      else datetime.date(first.year, first.month + 1, 1))
+        yield max(first, start), min(next_first - datetime.timedelta(days=1), end)
+        first = next_first
+
+
 def build(fetcher, start, end=None, forms="UPLOAD", progress=None):
     """Return {cik: Registrant} for every letter filed in [start, end]."""
     end = end or datetime.date.today()
     today = datetime.date.today()
     registrants = {}
 
+    spans = []
     for q_start, q_end in _quarters(start, end):
-        closed = q_end < today - datetime.timedelta(days=7)
+        spans.append((q_start, q_end))
+
+    index = 0
+    while index < len(spans):
+        span_start, span_end = spans[index]
+        index += 1
+        closed = span_end < today - datetime.timedelta(days=7)
         offset, total = 0, None
         while True:
             try:
-                payload = _fetch_page(fetcher, forms, q_start, q_end, offset, closed)
+                payload = _fetch_page(fetcher, forms, span_start, span_end,
+                                      offset, closed)
             except FetchError:
                 break
             hits = (payload.get("hits") or {}).get("hits") or []
             if total is None:
                 total = ((payload.get("hits") or {}).get("total") or {}).get("value", 0)
+                # Full-text search cannot page past 10,000 documents. No
+                # quarter since 2010 comes close, but if one ever does, split
+                # it into months and scan those instead of silently truncating.
+                if total > MAX_OFFSET and (span_end - span_start).days > 35:
+                    spans[index:index] = list(_months(span_start, span_end))
+                    break
                 if progress:
-                    progress(q_start, q_end, total)
+                    progress(span_start, span_end, total)
 
             for hit in hits:
                 source = hit.get("_source") or {}

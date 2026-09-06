@@ -63,7 +63,8 @@ Screens (no ticker needed):
 | --- | --- |
 | `--screen active` | companies drawing the most comment letters |
 | `--screen overdue` | companies whose last comment letter is stalest |
-| `--screen-years N` | years of history to census (default 10) |
+| `--screen-from YEAR` | first year of the census (default 2010) |
+| `--screen-years N` | census only the last N years — a quick run for `active` |
 | `--watchlist FILE` | restrict a screen to your own tickers, one per line |
 | `--listed-only` | on `--screen active`, drop filers with no current ticker |
 | `--include-never` | rank names with no letter anywhere in the census |
@@ -177,13 +178,15 @@ python3 research/clbot.py --screen active --screen-years 5
 python3 research/clbot.py --screen overdue --watchlist my-names.txt --include-never
 ```
 
-Both are built from a **census** of every comment letter EDGAR has released in a
-date range, assembled from EDGAR full-text search — 100 hits per request,
+Both are built from a **census** of every comment letter EDGAR has released
+since 2010, assembled from EDGAR full-text search — 100 hits per request,
 filtered by form server-side, deduplicated by accession number. The obvious
 alternative, EDGAR's quarterly full indexes, is authoritative but costs about
 50 MB per quarter: four gigabytes for a decade. Full-text search does the same
-job in roughly 700 requests, or under three minutes, and every response is
-cached, so later runs are nearly free.
+job in about 1,400 requests — five or six minutes the first time — and every
+response is cached, so later runs are nearly free. `--screen-years 5` is a
+quick shallow build when you only want `active` and do not care about the
+long tail.
 
 **`--screen active`** ranks by letter count, and separates two different facts:
 `REVIEWS` clusters letters into distinct reviews, `ROUNDS` is the most letters
@@ -206,7 +209,8 @@ years, which is what makes a long gap interesting — but:
 - Recent letters are still inside their private window and invisible.
 - A census has an edge. A company whose last letter sits at the start of the
   window has an unknown true gap, so those rows are marked `>=` — a floor, not
-  a measurement. This is why the default census is ten years deep.
+  a measurement. This is why the default census starts in 2010: nothing on a
+  listed watchlist is likely to have gone longer than that without a letter.
 - A registrant that reorganised, spun off, or redomiciled gets a **new CIK with
   no history**, which looks maximally overdue for the least interesting reason
   there is. On a watchlist-sized run the screen checks each silent name's first

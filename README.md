@@ -194,7 +194,7 @@ finishes a session. Do not edit by hand; never delete another machine row._
 
 | Machine | Last touched (UTC) | Branch | Commit | Summary |
 | ------- | ------------------ | ------ | ------ | ------- |
-| ClaudeWeb | 2026-09-06 17:29 | claude/sec-comment-letter-bot-lo5ur4 | 5bd5e03 | Private-window insider scan, comment-letter census screens, dissemination-date fix |
+| ClaudeWeb | 2026-09-06 19:14 | claude/sec-comment-letter-bot-lo5ur4 | 08fe969 | Census defaults to 2010; month-chunk guard for busy quarters |
 | Antonio | 2026-08-27 00:51 | antonio/work-protocol | 0723700 | Install shared two-machine work protocol |
 
 <!-- POSTMARK:END -->

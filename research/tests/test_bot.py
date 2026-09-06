@@ -425,6 +425,14 @@ class CensusTests(unittest.TestCase):
         for earlier, later in zip(spans, spans[1:]):
             self.assertEqual((later[0] - earlier[1]).days, 1)
 
+    def test_months_cover_a_quarter_without_gaps(self):
+        spans = list(census._months(datetime.date(2010, 1, 1),
+                                    datetime.date(2010, 3, 31)))
+        self.assertEqual(len(spans), 3)
+        self.assertEqual(spans[0], (datetime.date(2010, 1, 1),
+                                    datetime.date(2010, 1, 31)))
+        self.assertEqual(spans[-1][1], datetime.date(2010, 3, 31))
+
     def _registrant(self, dates):
         entry = census.Registrant(99999, "Example Corp", ["EXC"])
         for index, day in enumerate(dates):

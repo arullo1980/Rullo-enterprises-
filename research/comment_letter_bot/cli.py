@@ -250,7 +250,10 @@ def run_screen(args):
     """Market-wide screens built from a comment-letter census."""
     fetcher = Fetcher(use_cache=not args.no_cache)
     today = datetime.date.today()
-    start = datetime.date(today.year - args.screen_years, 1, 1)
+    if args.screen_years:
+        start = datetime.date(today.year - args.screen_years, 1, 1)
+    else:
+        start = datetime.date(args.screen_from, 1, 1)
 
     def progress(q_start, q_end, total):
         print("  scanning %s..%s  (%d documents)" % (q_start, q_end, total),
@@ -409,10 +412,14 @@ def build_parser():
     screen.add_argument("--screen", choices=("active", "overdue"),
                         help="'active': most comment letters in the window. "
                              "'overdue': longest since the last one.")
-    screen.add_argument("--screen-years", type=int, default=10,
-                        help="years of history to census (default: %(default)s). "
+    screen.add_argument("--screen-from", type=int, metavar="YEAR",
+                        default=config.CENSUS_START_YEAR,
+                        help="first year of the census (default: %(default)s). "
                              "A shallow census makes 'overdue' meaningless: "
                              "everything older than the window looks identical.")
+    screen.add_argument("--screen-years", type=int, metavar="N",
+                        help="census the last N years instead of from a fixed "
+                             "year; a quick shallow run for --screen active")
     screen.add_argument("--screen-limit", type=int, default=25,
                         help="rows to print (default: %(default)s)")
     screen.add_argument("--watchlist", metavar="FILE",

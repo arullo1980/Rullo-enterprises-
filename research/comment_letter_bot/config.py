@@ -74,6 +74,12 @@ WINDOW_FORMS = INSIDER_FORMS + AFFILIATE_SALE_FORMS + INSTITUTIONAL_FORMS
 OPEN_MARKET_CODES = {"P": "open-market purchase", "S": "open-market sale"}
 DISCRETIONARY_CODES = {"P", "S", "F", "M", "G"}
 
+# The census behind the screens reaches back to this year by default. The
+# SEC began releasing comment letters in 2005, and its full-text index is
+# reliable from about 2010; a census that starts later leaves the "overdue"
+# screen unable to tell a five-year gap from a fifteen-year one.
+CENSUS_START_YEAR = 2010
+
 # When the user has never traded the name, look back this far instead.
 DEFAULT_LOOKBACK_DAYS = 1095
 
