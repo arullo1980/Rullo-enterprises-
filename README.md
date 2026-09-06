@@ -26,6 +26,10 @@ this codebase never sees or stores payment data.
 │   ├── icons.svg          # SVG symbol sheet (currently unused)
 │   ├── robots.txt
 │   └── sitemap.xml
+├── research/              # owner research tooling (NOT deployed; see below)
+│   ├── clbot.py           # SEC comment-letter bot launcher
+│   ├── comment_letter_bot/
+│   └── tests/
 ├── CLAUDE_CODE_HANDOFF.md # full project brief, integration + deployment notes
 └── README.md
 ```
@@ -141,6 +145,25 @@ don't assume they exist.
 
 ---
 
+## Research tooling (not deployed)
+
+`research/` holds an owner-facing command-line tool that is unrelated to the
+storefront: a **SEC comment-letter bot** that scans EDGAR for staff comment
+letters (`UPLOAD`) and company responses (`CORRESP`) on a ticker, summarises
+everything filed since a given trade date, and reads the result against the
+stock's own price history.
+
+```bash
+export SEC_USER_AGENT="Your Name your@email"
+python3 research/clbot.py AAPL
+```
+
+Standard library only, like the rest of the repository. It lives outside
+`site/`, so the Pages workflow never publishes it. See `research/README.md`
+for the scoring model and its limits.
+
+---
+
 ## Outstanding
 
 Tracked in detail in `CLAUDE_CODE_HANDOFF.md`:
@@ -165,6 +188,7 @@ finishes a session. Do not edit by hand; never delete another machine row._
 
 | Machine | Last touched (UTC) | Branch | Commit | Summary |
 | ------- | ------------------ | ------ | ------ | ------- |
+| ClaudeWeb | 2026-09-06 17:05 | claude/sec-comment-letter-bot-lo5ur4 | e9ee476 | Add research/: SEC comment-letter bot (EDGAR UPLOAD/CORRESP scan, letter scoring, price event study) |
 | Antonio | 2026-08-27 00:51 | antonio/work-protocol | 0723700 | Install shared two-machine work protocol |
 
 <!-- POSTMARK:END -->
