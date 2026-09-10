@@ -205,7 +205,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px soli
 
 /* ---------- Footer ---------- */
 .footer { background: var(--ink-deep); color: rgba(250,247,239,.72); padding-top: 3.6rem; }
-.footer-grid { display: grid; grid-template-columns: 1.7fr 1fr 1fr 1fr; gap: 36px; padding-bottom: 2.6rem; border-bottom: 1px solid rgba(250,247,239,.12); }
+.footer-grid { display: grid; grid-template-columns: 1.7fr 1fr 1fr; gap: 36px; padding-bottom: 2.6rem; border-bottom: 1px solid rgba(250,247,239,.12); }
 .footer-mark { display: inline-flex; align-items: center; gap: 11px; font-family: var(--display); font-weight: 700; font-size: 1.25rem; color: #fff; }
 .footer-copy { font-size: .93rem; max-width: 32ch; color: rgba(250,247,239,.55); margin-top: 14px; }
 .footer-label { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-l); margin-bottom: 14px; }
