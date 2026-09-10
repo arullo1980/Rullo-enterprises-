@@ -28,13 +28,13 @@ Because the company sells goods and services at retail and never holds or transm
 | Stolen-card fraud (gift cards) | High for the industry; the primary risk to this business | Stripe Radar, 3D Secure on all gift card orders, order caps, velocity limits, manual review above USD 250 |
 | Scam-victim purchases (customer coerced into buying gift cards) | Medium | Scam warning at checkout and in Terms; refusal of orders with scam indicators; support contact before payment |
 | Money laundering / structuring | Low: no cash-out path, small ticket sizes, no customer balances | Order caps, velocity limits, monitoring for repeated purchases from one card, email, or device; record keeping |
-| Sanctions | Low-to-medium given worldwide delivery | Card-country and IP-country blocking at Stripe; destination controls at Reloadly; no comprehensively sanctioned destinations except where a general license applies |
+| Sanctions | Low-to-medium given worldwide delivery | Card-country and IP-country blocking at Stripe; destination controls at Reloadly; no comprehensively sanctioned destinations offered (Cuba, Iran, North Korea, Syria, occupied regions of Ukraine) |
 | Chargebacks / friendly fraud | Medium | Clear descriptor (RULLOENTERPRISES.COM), price and recipient shown before confirmation, refund policy, 24-hour support, delivery evidence retained |
 | Failed delivery | Low | Full automatic refund policy; Reloadly credits wholesale cost back on failed fulfilment |
 
 ## 3. Fraud prevention controls
 
-1. **Stripe Radar** screens every payment. Rules block or hold for review: billing country different from card-issuing country; IP country different from card country on gift card orders; more than two cards used from one device or email in 24 hours; repeated declined attempts; and any Radar risk score above the threshold we set (initially 65, tightened as data accumulates).
+1. **Stripe Radar** screens every payment under the rule set in `stripe-radar-rules.md` (maintained alongside this statement). In summary: payments are blocked when Radar rates them highest risk or scores above 80, when the card or IP is from a sanctioned country, when the IP is an anonymising proxy or the email disposable, when the CVC check fails, or when velocity limits are exceeded; payments are held for manual review when the score exceeds 65, the amount exceeds USD 250, the card country and IP country differ, the card is prepaid, or a card, email, or IP address is approaching its daily limit. Thresholds are tightened as data accumulates.
 2. **3D Secure** is requested on every gift card purchase and on any order Radar flags, shifting liability for unauthorised card use to the issuing bank.
 3. **Order caps.** A single order is limited to USD 500 for gift cards and USD 250 for airtime, data, and bill payments. Lower brand or operator limits apply automatically. Caps are reviewed after 90 days of live data and changed only in consultation with our payment processor.
 4. **Velocity limits.** No more than three orders, and no more than USD 750 in aggregate, from the same card, email address, or device in any 24-hour period.
@@ -56,7 +56,7 @@ Although the company is not a money services business, it applies proportionate 
 
 ## 5. Sanctions policy
 
-- We do not sell to any person or entity on the US Treasury OFAC Specially Designated Nationals list or any other US sanctions list, and we do not deliver to destinations subject to comprehensive US sanctions (currently Iran, North Korea, Syria, and the Crimea, Donetsk, and Luhansk regions), except where a specific OFAC general license permits the transaction, such as telecommunications services to Cuba under 31 CFR §515.542.
+- We do not sell to any person or entity on the US Treasury OFAC Specially Designated Nationals list or any other US sanctions list, and we do not deliver to, or accept payment from, destinations subject to comprehensive US sanctions: currently Cuba, Iran, North Korea, Syria, and the Crimea, Donetsk, and Luhansk regions. We do not rely on any general license; these destinations are simply not offered.
 - **Enforcement points.** Stripe blocks cards and IP addresses from sanctioned countries at checkout. Reloadly, as a licensed distributor, controls which destinations, operators, and brands are available in the catalog and does not offer products for sanctioned destinations. We do not enable any destination in our catalog that Reloadly does not support.
 - **Screening.** Where an order is held for manual review, the customer and recipient details are checked against the OFAC SDN list before fulfilment.
 

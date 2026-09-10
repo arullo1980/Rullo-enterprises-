@@ -9,7 +9,7 @@
     ["Austria","AT"],["Bahrain","BH"],["Bangladesh","BD"],["Belgium","BE"],["Benin","BJ"],
     ["Bolivia","BO"],["Botswana","BW"],["Brazil","BR"],["Bulgaria","BG"],["Burkina Faso","BF"],
     ["Cambodia","KH"],["Cameroon","CM"],["Canada","CA"],["Chile","CL"],["China","CN"],
-    ["Colombia","CO"],["Costa Rica","CR"],["Croatia","HR"],["Cuba","CU"],["Czechia","CZ"],
+    ["Colombia","CO"],["Costa Rica","CR"],["Croatia","HR"],["Czechia","CZ"],
     ["Denmark","DK"],["Dominican Republic","DO"],["DR Congo","CD"],["Ecuador","EC"],["Egypt","EG"],
     ["El Salvador","SV"],["Ethiopia","ET"],["Fiji","FJ"],["Finland","FI"],["France","FR"],
     ["Gabon","GA"],["Germany","DE"],["Ghana","GH"],["Greece","GR"],["Guatemala","GT"],
