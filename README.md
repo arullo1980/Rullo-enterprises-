@@ -170,6 +170,6 @@ finishes a session. Do not edit by hand; never delete another machine row._
 
 | Machine | Last touched (UTC) | Branch | Commit | Summary |
 | ------- | ------------------ | ------ | ------ | ------- |
-| Antonio | 2026-08-27 00:51 | antonio/work-protocol | 0723700 | Install shared two-machine work protocol |
+| Antonio | 2026-09-10 22:29 | claude/funny-keller-47nuxl | 28ca8ab | Legal pages, legal-entity naming, Stripe compliance docs |
 
 <!-- POSTMARK:END -->
