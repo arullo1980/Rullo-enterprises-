@@ -21,8 +21,12 @@ bundles, gift cards, utility bill payments, worldwide.
 **Open items**
 1. Enable GitHub Pages (Settings > Pages > Source = GitHub Actions); the
    `deploy.yml` workflow publishes `site/`.
-2. The privacy policy in `site/privacy/` is a **DRAFT** and must be finished
-   before launch.
+2. The privacy policy in `site/privacy/`, terms in `site/terms/`, and refund
+   policy in `site/refunds/` are **DRAFTS** (noindex) pending legal review
+   before launch. `docs/compliance/` holds the risk & compliance statement
+   prepared for Stripe's stored-value review; keep site copy consistent with
+   it (order caps $500 gift cards / $250 top-ups, excluded categories,
+   support at info@rulloenterprises.com within 24h).
 3. Wire up the secure Reloadly API proxy scaffold added in PR #5.
 4. Checkout runs inside Reloadly's embedded Plugin V2 widget, so this codebase
    never sees payment data. Widget behavior/theme is configured in the Reloadly

@@ -20,12 +20,17 @@ this codebase never sees or stores payment data.
 │   ├── 404.html           # on-brand not-found page
 │   ├── privacy/
 │   │   └── index.html     # privacy policy (DRAFT — see "Outstanding" below)
+│   ├── terms/
+│   │   └── index.html     # terms of service (DRAFT, pending legal review)
+│   ├── refunds/
+│   │   └── index.html     # refund & delivery policy (DRAFT, pending legal review)
 │   ├── css/
 │   │   └── styles.css     # all styles, shared across pages
 │   ├── favicon.svg        # "RE" monogram in the site's ink/paper palette
 │   ├── icons.svg          # SVG symbol sheet (currently unused)
 │   ├── robots.txt
 │   └── sitemap.xml
+├── docs/compliance/       # risk & compliance statement (for payment-processor review)
 ├── CLAUDE_CODE_HANDOFF.md # full project brief, integration + deployment notes
 └── README.md
 ```

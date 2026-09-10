@@ -173,6 +173,9 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px soli
 .widget-topbar .dots span:nth-child(3) { background: #28c840; }
 .widget-topbar .wt-label { font-family: var(--mono); font-size: .78rem; color: var(--ink-faint); }
 .widget-frame { padding: clamp(1.2rem, 3vw, 2rem); min-height: 200px; }
+.checkout-terms { max-width: 640px; margin: 10px auto 0; text-align: center; color: var(--ink-soft); font-size: .82rem; line-height: 1.5; }
+.checkout-terms a { color: var(--emerald); text-decoration: underline; }
+.checkout-warn { color: var(--ink); }
 .powered-by { margin-top: 16px; text-align: center; color: var(--ink-faint); font-size: .82rem; font-family: var(--mono); }
 
 /* ---------- How it works ---------- */
