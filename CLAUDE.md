@@ -8,6 +8,10 @@ Guidance for Claude Code working in this repository.
 **Reloadly storefront for rulloenterprises.com** - airtime top-ups, data
 bundles, gift cards, utility bill payments, worldwide.
 
+- **Legal entity:** Content Research Group USA Inc. (US). "Rullo Enterprises"
+  is the storefront trade name. Use the legal name in anything contractual,
+  regulatory, or payment-processor facing (Stripe, Reloadly).
+
 - **Stack:** plain static HTML/CSS in `site/`. No build step, no framework, no
   dependencies. A Cloudflare Worker proxy was added recently (PR #5).
 - **State:** built and rendering locally, **not yet live**.
